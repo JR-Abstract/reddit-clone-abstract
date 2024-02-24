@@ -31,9 +31,9 @@ CREATE TABLE `comment` (
   PRIMARY KEY (`id`),
   KEY `FKs1slvnkuemjsq2kj4h3vhx7i1` (`post_id`),
   KEY `FK8kcum44fvpupyw6f5baccx25c` (`user_id`),
-  CONSTRAINT `FK8kcum44fvpupyw6f5baccx25c` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `FKs1slvnkuemjsq2kj4h3vhx7i1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK8kcum44fvpupyw6f5baccx25c` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKs1slvnkuemjsq2kj4h3vhx7i1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `comment` (
 
 LOCK TABLES `comment` WRITE;
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-INSERT INTO `comment` (`id`, `created_date`, `text`, `post_id`, `user_id`) VALUES (1,'2024-02-21 20:06:02.659638','Test 123',1,1);
+INSERT INTO `comment` (`id`, `created_date`, `text`, `post_id`, `user_id`) VALUES (1,'2024-02-21 20:06:02.659638','Test 123',1,1),(2,'2024-02-24 10:33:42.275020','Test comment',1,1);
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,19 +54,19 @@ DROP TABLE IF EXISTS `post`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `post` (
-  `post_id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `created_date` datetime(6) DEFAULT NULL,
   `description` tinytext,
   `post_name` varchar(255) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
   `vote_count` int DEFAULT NULL,
-  `id` bigint DEFAULT NULL,
+  `subreddit_id` bigint DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`post_id`),
-  KEY `FK7dhm40vytolqggids4vc9ykvt` (`id`),
+  PRIMARY KEY (`id`),
+  KEY `FK7dhm40vytolqggids4vc9ykvt` (`subreddit_id`),
   KEY `FK72mt33dhhs48hf9gcqrq4fxte` (`user_id`),
-  CONSTRAINT `FK72mt33dhhs48hf9gcqrq4fxte` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `FK7dhm40vytolqggids4vc9ykvt` FOREIGN KEY (`id`) REFERENCES `subreddit` (`id`)
+  CONSTRAINT `FK72mt33dhhs48hf9gcqrq4fxte` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK7dhm40vytolqggids4vc9ykvt` FOREIGN KEY (`subreddit_id`) REFERENCES `subreddit` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -76,7 +76,7 @@ CREATE TABLE `post` (
 
 LOCK TABLES `post` WRITE;
 /*!40000 ALTER TABLE `post` DISABLE KEYS */;
-INSERT INTO `post` (`post_id`, `created_date`, `description`, `post_name`, `url`, `vote_count`, `id`, `user_id`) VALUES (1,'2024-02-21 20:05:53.852837','<p>Hello world!</p>','The first ever post','test',1,1,1);
+INSERT INTO `post` (`id`, `created_date`, `description`, `post_name`, `url`, `vote_count`, `subreddit_id`, `user_id`) VALUES (1,'2024-02-21 20:05:53.852837','<p>Hello world!</p>','The first ever post','test',1,1,1);
 /*!40000 ALTER TABLE `post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ CREATE TABLE `refresh_token` (
   `created_date` datetime(6) DEFAULT NULL,
   `token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `refresh_token` (
 
 LOCK TABLES `refresh_token` WRITE;
 /*!40000 ALTER TABLE `refresh_token` DISABLE KEYS */;
-INSERT INTO `refresh_token` (`id`, `created_date`, `token`) VALUES (1,'2024-02-21 20:05:20.151378','cb2eae24-2165-44e2-ba05-b52c05c1d96c'),(2,'2024-02-21 20:11:30.762784','420e756f-0d42-4e01-acec-928a9a2349e8');
+INSERT INTO `refresh_token` (`id`, `created_date`, `token`) VALUES (1,'2024-02-21 20:05:20.151378','cb2eae24-2165-44e2-ba05-b52c05c1d96c'),(2,'2024-02-21 20:11:30.762784','420e756f-0d42-4e01-acec-928a9a2349e8'),(4,'2024-02-24 10:33:22.530955','eb199484-fa9b-42a4-ac29-e63e0440ef1b');
 /*!40000 ALTER TABLE `refresh_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,10 +117,10 @@ CREATE TABLE `subreddit` (
   `created_date` datetime(6) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `user_user_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKqye4s0ll7xwj74d7irovyhbvg` (`user_user_id`),
-  CONSTRAINT `FKqye4s0ll7xwj74d7irovyhbvg` FOREIGN KEY (`user_user_id`) REFERENCES `user` (`user_id`)
+  KEY `FKqye4s0ll7xwj74d7irovyhbvg` (`user_id`),
+  CONSTRAINT `FKqye4s0ll7xwj74d7irovyhbvg` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -130,7 +130,7 @@ CREATE TABLE `subreddit` (
 
 LOCK TABLES `subreddit` WRITE;
 /*!40000 ALTER TABLE `subreddit` DISABLE KEYS */;
-INSERT INTO `subreddit` (`id`, `created_date`, `description`, `name`, `user_user_id`) VALUES (1,NULL,'The first ever subreddit','Abstract',NULL);
+INSERT INTO `subreddit` (`id`, `created_date`, `description`, `name`, `user_id`) VALUES (1,'2024-02-20 11:19:42.000000','The first ever subreddit','Abstract',1);
 /*!40000 ALTER TABLE `subreddit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,11 +143,11 @@ DROP TABLE IF EXISTS `subreddit_posts`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `subreddit_posts` (
   `subreddit_id` bigint NOT NULL,
-  `posts_post_id` bigint NOT NULL,
-  UNIQUE KEY `UK_ih17w4fa2em7w3u1tt8gqv2wh` (`posts_post_id`),
+  `posts_id` bigint NOT NULL,
+  UNIQUE KEY `UK_ih17w4fa2em7w3u1tt8gqv2wh` (`posts_id`),
   KEY `FK1plpyiqs72shw84g90q0fes5r` (`subreddit_id`),
   CONSTRAINT `FK1plpyiqs72shw84g90q0fes5r` FOREIGN KEY (`subreddit_id`) REFERENCES `subreddit` (`id`),
-  CONSTRAINT `FKl27wc8sin3rt45ayge7fanx10` FOREIGN KEY (`posts_post_id`) REFERENCES `post` (`post_id`)
+  CONSTRAINT `FKl27wc8sin3rt45ayge7fanx10` FOREIGN KEY (`posts_id`) REFERENCES `post` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -157,6 +157,7 @@ CREATE TABLE `subreddit_posts` (
 
 LOCK TABLES `subreddit_posts` WRITE;
 /*!40000 ALTER TABLE `subreddit_posts` DISABLE KEYS */;
+INSERT INTO `subreddit_posts` (`subreddit_id`, `posts_id`) VALUES (1,1);
 /*!40000 ALTER TABLE `subreddit_posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,11 +172,11 @@ CREATE TABLE `token` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `expiry_date` datetime(6) DEFAULT NULL,
   `token` varchar(255) DEFAULT NULL,
-  `user_user_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK79keudebybjlldk2o4i0nwqev` (`user_user_id`),
-  CONSTRAINT `FK79keudebybjlldk2o4i0nwqev` FOREIGN KEY (`user_user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FK79keudebybjlldk2o4i0nwqev` (`user_id`),
+  CONSTRAINT `FK79keudebybjlldk2o4i0nwqev` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +185,7 @@ CREATE TABLE `token` (
 
 LOCK TABLES `token` WRITE;
 /*!40000 ALTER TABLE `token` DISABLE KEYS */;
-INSERT INTO `token` (`id`, `expiry_date`, `token`, `user_user_id`) VALUES (1,NULL,'b5dc8878-56f8-4f79-842e-cb8192a7895a',1);
+INSERT INTO `token` (`id`, `expiry_date`, `token`, `user_id`) VALUES (1,NULL,'b5dc8878-56f8-4f79-842e-cb8192a7895a',1),(2,NULL,'cf305f8a-99ad-4388-bce9-2d066a38e600',4);
 /*!40000 ALTER TABLE `token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -196,14 +197,14 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `user_id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `created` datetime(6) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `enabled` bit(1) NOT NULL,
   `password` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,7 +213,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`user_id`, `created`, `email`, `enabled`, `password`, `username`) VALUES (1,'2024-02-21 20:04:22.395898','oleksandr@jr.com',_binary '','root','oleksandr');
+INSERT INTO `user` (`id`, `created`, `email`, `enabled`, `password`, `username`) VALUES (1,'2024-02-21 20:04:22.395898','oleksandr@jr.com',_binary '','$2a$10$OFoVJu4bazyPMRqIyPuq6.mUqCO67db04pmR2dSLSAnEo.FIdSxLu','oleksandr'),(4,'2024-02-24 10:27:26.961737','test@user.com',_binary '','$2a$10$OFoVJu4bazyPMRqIyPuq6.mUqCO67db04pmR2dSLSAnEo.FIdSxLu','user');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,8 +232,8 @@ CREATE TABLE `vote` (
   PRIMARY KEY (`vote_id`),
   KEY `FKl3c067ewaw5xktl5cjvniv3e9` (`post_id`),
   KEY `FKcsaksoe2iepaj8birrmithwve` (`user_id`),
-  CONSTRAINT `FKcsaksoe2iepaj8birrmithwve` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `FKl3c067ewaw5xktl5cjvniv3e9` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`)
+  CONSTRAINT `FKcsaksoe2iepaj8birrmithwve` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKl3c067ewaw5xktl5cjvniv3e9` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -255,4 +256,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-24 11:04:57
+-- Dump completed on 2024-02-24 11:49:04
