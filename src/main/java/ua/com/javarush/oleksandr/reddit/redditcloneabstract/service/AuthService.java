@@ -1,7 +1,9 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
@@ -22,4 +24,16 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    public User login(LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!password.equals(user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+        return user;
+    }
 }
