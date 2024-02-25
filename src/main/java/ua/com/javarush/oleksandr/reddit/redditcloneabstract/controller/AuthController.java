@@ -24,8 +24,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
-        authService.login(loginRequest);
-        return String.valueOf(new ResponseEntity<>("Login Successful", OK));
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            authService.login(loginRequest);
+            return ResponseEntity.ok("Login Successful");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed");
+        }
     }
 }
