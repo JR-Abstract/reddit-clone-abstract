@@ -1,0 +1,2 @@
+# reddit-clone-abstract
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ece08410f1724360b27146630925cc49)](https://app.codacy.com/gh/JR-Abstract/reddit-clone-abstract?utm_source=github.com&utm_medium=referral&utm_content=JR-Abstract/reddit-clone-abstract&utm_campaign=Badge_Grade)
