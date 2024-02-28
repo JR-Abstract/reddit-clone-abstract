@@ -19,5 +19,6 @@ public class SubredditDTO {
 
     private String description;
 
+    @Builder.Default
     private Integer numberOfPosts = 0;
 }
