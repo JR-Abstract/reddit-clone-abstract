@@ -1,7 +1,6 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;

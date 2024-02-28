@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService;
 
 import static org.springframework.http.HttpStatus.OK;
