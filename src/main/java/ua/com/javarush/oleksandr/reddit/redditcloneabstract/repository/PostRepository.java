@@ -9,5 +9,5 @@ import java.util.Collection;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Collection<Post> findByUser_Username(String username);
+    Collection<Post> findByUserUsername(String username);
 }
