@@ -32,7 +32,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDTO postRequestDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDTO postRequestDTO,
+                                        BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return handleErrorsFromBindingResult(bindingResult);
