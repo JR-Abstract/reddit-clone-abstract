@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
@@ -50,7 +49,7 @@ public class Subreddit {
     @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private ZonedDateTime createdDate;
 
-    @ManyToOne(cascade = {CascadeType.REMOVE}, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id",
             updatable = false,
             nullable = false,
