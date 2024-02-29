@@ -67,17 +67,9 @@ jobs:
           check_name: Test Report 3
           report_paths: 'target/surefire-reports/*.xml'
 
-      - name: Create logs directory
-        run: mkdir logs
-
       - name: Upload test results to testhub.io
         if: always()
         uses: testhub-io/testhub-io.action@v0.62
         with:
           test_result_pattern: "target/surefire-reports/*.xml"
           test_coverage_pattern: "target/site/jacoco/jacoco.xml"
-
-      - name: Show logs
-        run: |
-          ls -R && echo '\n' && grep . *
-        if: always()
