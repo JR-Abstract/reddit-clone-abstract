@@ -31,7 +31,7 @@ class SubredditMapperTest {
 
 
     @Test
-    void subredditToSubredditDto() {
+    void subredditToSubredditDto_PostsCountMatching() {
         when(postService.countAllBySubreddit_Id(anyLong())).thenReturn(3);
 
         Subreddit subreddit = Subreddit.with()
@@ -60,7 +60,7 @@ class SubredditMapperTest {
     }
 
     @Test
-    void nullSubredditToSubredditDto() {
+    void subredditToSubredditDto_NullSubreddit_NullResponse() {
 
         SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(null);
 
@@ -68,7 +68,7 @@ class SubredditMapperTest {
     }
 
     @Test
-    void subredditDtoToSubreddit() {
+    void subredditDtoToSubreddit_Creation() {
 
         String username = "username";
 
@@ -91,7 +91,7 @@ class SubredditMapperTest {
     }
 
     @Test
-    void nullSubredditDtoToSubreddit() {
+    void subredditDtoToSubreddit_NullDto_NullSubreddit() {
 
         Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(null);
 

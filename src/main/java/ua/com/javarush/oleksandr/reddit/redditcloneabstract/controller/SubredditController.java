@@ -68,7 +68,8 @@ public class SubredditController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subreddit not found");
         }
 
-        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(subredditOptional.get());
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.
+                subredditToSubredditResponseDto(subredditOptional.get());
 
         return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDTO);
     }
