@@ -73,7 +73,3 @@ jobs:
         with:
           test_result_pattern: "target/surefire-reports/*.xml"
           test_coverage_pattern: "target/site/jacoco/jacoco.xml"
-
-      - name: Show logs
-        run: cd logs && ls -R && echo '\n' && grep . *
-        if: always()
