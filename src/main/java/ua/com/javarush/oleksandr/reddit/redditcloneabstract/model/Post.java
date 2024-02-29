@@ -67,10 +67,10 @@ public class Post {
     @Column(name = "vote_count")
     private int voteCount = 0;
 
-    /* @ToString.Exclude
+    @ToString.Exclude
     @ManyToOne(optional = false)
     @JoinColumn(name = "subreddit_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_subreddit"))
-    private Subreddit subreddit;*/
+    private Subreddit subreddit;
 
     @ToString.Exclude
     @ManyToOne(optional = false)
