@@ -29,6 +29,10 @@ public class PostService {
     }
 
     public Collection<Post> findPostsByUsername(String username) {
-        return postRepository.findByUserUsername(username);
+        return postRepository.findByUser_Username(username);
+    }
+
+    public Integer countAllBySubreddit_Id(Long id) {
+        return postRepository.countAllBySubreddit_Id(id);
     }
 }

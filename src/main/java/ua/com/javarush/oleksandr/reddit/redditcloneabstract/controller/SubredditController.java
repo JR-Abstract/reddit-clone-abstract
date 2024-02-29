@@ -1,6 +1,7 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.SubredditMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.SubredditService;
 
@@ -22,14 +24,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/subreddit")
+@RequiredArgsConstructor
 public class SubredditController {
 
     private final SubredditService subredditService;
-
-    @Autowired
-    public SubredditController(SubredditService subredditService) {
-        this.subredditService = subredditService;
-    }
+    private final SubredditMapper subredditMapper;
 
     @PostMapping
     public ResponseEntity<SubredditDTO> createSubreddit(@RequestBody @Valid SubredditDTO subredditDTO,
@@ -41,11 +40,7 @@ public class SubredditController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid subreddit data");
         }
 
-        // TODO: implement mapper
-        Subreddit subreddit = Subreddit.with()
-                .name(subredditDTO.getName())
-                .description(subredditDTO.getDescription())
-                .build();
+        Subreddit subreddit = subredditMapper.subredditDtoToSubreddit(subredditDTO);
 
         subredditService.save(subreddit);
 
@@ -54,16 +49,10 @@ public class SubredditController {
 
     @GetMapping
     public ResponseEntity<List<SubredditDTO>> getAllSubreddits() {
-        // TODO: implement mapper
-        List<Subreddit> subreddits = subredditService.findAll();
 
-        List<SubredditDTO> subredditDTOList = subreddits
+        List<SubredditDTO> subredditDTOList = subredditService.findAll()
                 .stream()
-                .map(subreddit -> SubredditDTO.with()
-                        .name(subreddit.getName())
-                        .description(subreddit.getDescription())
-                        .id(subreddit.getId())
-                        .build())
+                .map(subredditMapper::subredditToSubredditDto)
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(subredditDTOList);
@@ -71,19 +60,16 @@ public class SubredditController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SubredditDTO> getSubreddit(@PathVariable Long id) {
-        // TODO: implement mapper
+
         Optional<Subreddit> subredditOptional = subredditService.findById(id);
+
         if (subredditOptional.isEmpty()) {
             // TODO: implement throw exception
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subreddit not found");
         }
 
-        Subreddit subreddit = subredditOptional.get();
-        SubredditDTO subredditDTO = SubredditDTO.with()
-                .name(subreddit.getName())
-                .description(subreddit.getDescription())
-                .id(subreddit.getId())
-                .build();
+        SubredditDTO subredditDTO = subredditMapper.subredditToSubredditDto(subredditOptional.get());
+
         return ResponseEntity.status(HttpStatus.OK).body(subredditDTO);
     }
 

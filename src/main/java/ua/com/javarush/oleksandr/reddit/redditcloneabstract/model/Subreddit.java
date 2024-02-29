@@ -12,10 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ConstraintMode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -49,6 +46,7 @@ public class Subreddit {
     @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
     private ZonedDateTime createdDate;
 
+    @ToString.Exclude
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id",
             updatable = false,
