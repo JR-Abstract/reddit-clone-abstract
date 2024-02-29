@@ -4,12 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditRequestDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditResponseDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -18,8 +22,12 @@ class SubredditMapperTest {
     @MockBean
     private PostService postService;
 
+    @MockBean
+    private UserService userService;
+
     @Autowired
     private SubredditMapper subredditMapper;
+
 
 
     @Test
@@ -32,12 +40,12 @@ class SubredditMapperTest {
                 .description("Subreddit description")
                 .build();
 
-        SubredditDTO subredditDTO = subredditMapper.subredditToSubredditDto(subreddit);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(subreddit);
 
-        assertThat(subredditDTO.getId()).isEqualTo(subreddit.getId());
-        assertThat(subredditDTO.getName()).isEqualTo(subreddit.getName());
-        assertThat(subredditDTO.getDescription()).isEqualTo(subreddit.getDescription());
-        assertThat(subredditDTO.getNumberOfPosts()).isEqualTo(3);
+        assertThat(subredditResponseDTO.getId()).isEqualTo(subreddit.getId());
+        assertThat(subredditResponseDTO.getName()).isEqualTo(subreddit.getName());
+        assertThat(subredditResponseDTO.getDescription()).isEqualTo(subreddit.getDescription());
+        assertThat(subredditResponseDTO.getNumberOfPosts()).isEqualTo(3);
     }
 
     @Test
@@ -46,41 +54,46 @@ class SubredditMapperTest {
                 .id(null)
                 .build();
 
-        SubredditDTO subredditDTO = subredditMapper.subredditToSubredditDto(subreddit);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(subreddit);
 
-        assertThat(subredditDTO.getNumberOfPosts()).isEqualTo(0);
+        assertThat(subredditResponseDTO.getNumberOfPosts()).isEqualTo(0);
     }
 
     @Test
     void nullSubredditToSubredditDto() {
 
-        SubredditDTO subredditDTO = subredditMapper.subredditToSubredditDto(null);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(null);
 
-        assertThat(subredditDTO).isNull();
+        assertThat(subredditResponseDTO).isNull();
     }
 
     @Test
     void subredditDtoToSubreddit() {
 
-        SubredditDTO subredditDTO = SubredditDTO.with()
-                .id(1L)
+        String username = "username";
+
+        SubredditRequestDTO subredditRequestDTO = SubredditRequestDTO.with()
                 .name("Subreddit DTO name")
                 .description("Subreddit DTO description")
+                .username(username)
                 .build();
 
-        Subreddit subreddit = subredditMapper.subredditDtoToSubreddit(subredditDTO);
+        User user = mock(User.class);
+        when(userService.findUserByUsername(username)).thenReturn(user);
+
+        Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(subredditRequestDTO);
 
         assertThat(subreddit.getId()).isNull();
-        assertThat(subreddit.getName()).isEqualTo(subredditDTO.getName());
-        assertThat(subreddit.getDescription()).isEqualTo(subredditDTO.getDescription());
-        assertThat(subreddit.getUser()).isNull();
+        assertThat(subreddit.getName()).isEqualTo(subredditRequestDTO.getName());
+        assertThat(subreddit.getDescription()).isEqualTo(subredditRequestDTO.getDescription());
+        assertThat(subreddit.getUser()).isEqualTo(user);
         assertThat(subreddit.getCreatedDate()).isNull();
     }
 
     @Test
     void nullSubredditDtoToSubreddit() {
 
-        Subreddit subreddit = subredditMapper.subredditDtoToSubreddit(null);
+        Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(null);
 
         assertThat(subreddit).isNull();
     }
