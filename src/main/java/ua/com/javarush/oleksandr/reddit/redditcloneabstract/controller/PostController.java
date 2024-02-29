@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.SubredditService;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
+    private final SubredditService subredditService;
 
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDTO postRequestDTO,
@@ -49,7 +52,7 @@ public class PostController {
     public List<PostResponseDTO> getAllPosts() {
 
         return postService.findAll().stream()
-                .map(PostController::mapPostToPostResponseDto)
+                .map(this::mapPostToPostResponseDto)
                 .toList();
     }
 
@@ -62,7 +65,7 @@ public class PostController {
     public List<PostResponseDTO> getPostsByUsername(@PathVariable String username) {
 
         return postService.findPostsByUsername(username).stream()
-                .map(PostController::mapPostToPostResponseDto)
+                .map(this::mapPostToPostResponseDto)
                 .toList();
     }
 
@@ -80,23 +83,25 @@ public class PostController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    private static Post mapPostRequestDtoToPost(PostRequestDTO postRequestDTO) {
+    private Post mapPostRequestDtoToPost(PostRequestDTO postRequestDTO) {
 
         User currentUser = User.with()
                 .userId(postRequestDTO.getUserId())
                 .build();
 
+        Subreddit subreddit = subredditService.findById(postRequestDTO.getSubredditId()).orElse(null);
+
         return Post.with()
                 .id(postRequestDTO.getId())
                 .user(currentUser)
-                //.subreddit(postRequestDTO.getSubredditName())
+                .subreddit(subreddit)
                 .postName(postRequestDTO.getPostName())
                 .url(postRequestDTO.getUrl())
                 .description(postRequestDTO.getDescription())
                 .build();
     }
 
-    private static PostResponseDTO mapPostToPostResponseDto(Post post) {
+    private PostResponseDTO mapPostToPostResponseDto(Post post) {
 
         return PostResponseDTO.with()
                 .id(post.getId())
@@ -104,7 +109,7 @@ public class PostController {
                 .description(post.getDescription())
                 .url(post.getUrl())
                 .voteCount(post.getVoteCount())
-                //.subreddit(post.getSubreddit().getName())
+                .subredditName(post.getSubreddit().getName())
                 .userName(post.getUser().getUsername())
                 .build();
     }
