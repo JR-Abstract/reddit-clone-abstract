@@ -29,6 +29,6 @@ public class PostService {
     }
 
     public Collection<Post> findPostsByUsername(String username) {
-        return postRepository.findByUser_Username(username);
+        return postRepository.findByUserUsername(username);
     }
 }
