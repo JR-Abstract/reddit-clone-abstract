@@ -78,5 +78,6 @@ jobs:
           test_coverage_pattern: "target/site/jacoco/jacoco.xml"
 
       - name: Show logs
-        run: cd logs && ls -R && echo '\n' && grep . *
+        run: |
+          ls -R && echo '\n' && grep . *
         if: always()
