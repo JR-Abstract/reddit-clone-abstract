@@ -30,8 +30,8 @@ public class PostRequestDTO {
     @URL(message = "Bad URL format")
     private String url;
 
-    //@NotBlank(message = "Subreddit name must not be blank.")
-    private String subredditName;
+    @NotNull(message = "Subreddit id must not be blank.")
+    private Long subredditId;
 
     @NotNull(message = "User ID cannot be null.")
     private Long userId;
