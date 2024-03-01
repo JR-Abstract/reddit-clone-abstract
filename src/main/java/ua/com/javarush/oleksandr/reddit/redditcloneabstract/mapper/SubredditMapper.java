@@ -27,7 +27,7 @@ public abstract class SubredditMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(target = "createdDate", ignore = true)
-    @Mapping(source = "username", target = "user", qualifiedByName = "getUserByUsername")
+    @Mapping(source = "username", target = "user", qualifiedByName = "getUserByUsername") // TODO: delete this field when was implemented substitution user in subreddit
     abstract public Subreddit subredditRequestDtoToSubreddit(SubredditRequestDTO subredditRequestDTO);
 
     @Named("getCountSubredditPosts")

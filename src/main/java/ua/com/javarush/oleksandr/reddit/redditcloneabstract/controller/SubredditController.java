@@ -2,6 +2,7 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/subreddit")
 @RequiredArgsConstructor
+@Slf4j
 public class SubredditController {
 
     private final SubredditService subredditService;
@@ -33,16 +35,17 @@ public class SubredditController {
     @PostMapping
     public ResponseEntity<Void> createSubreddit(@RequestBody @Valid SubredditRequestDTO subredditRequestDTO,
                                                                BindingResult bindingResult) {
-
         // TODO: implement subredditValidator.validate(subredditDTO);
         if (bindingResult.hasErrors()) {
             // TODO: implement throw exception
+            log.warn("Invalid subreddit data: {}", bindingResult.getAllErrors());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid subreddit data");
         }
 
         Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(subredditRequestDTO);
 
         subredditService.save(subreddit);
+        log.info("Subreddit created: {}", subreddit);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -55,6 +58,7 @@ public class SubredditController {
                 .map(subredditMapper::subredditToSubredditResponseDto)
                 .toList();
 
+        log.info("Fetched all subreddits");
         return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDTOS);
     }
 
@@ -64,6 +68,8 @@ public class SubredditController {
         Optional<Subreddit> subredditOptional = subredditService.findById(id);
 
         if (subredditOptional.isEmpty()) {
+            log.warn("Subreddit not found with id: {}", id);
+
             // TODO: implement throw exception
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subreddit not found");
         }
@@ -71,11 +77,13 @@ public class SubredditController {
         SubredditResponseDTO subredditResponseDTO = subredditMapper.
                 subredditToSubredditResponseDto(subredditOptional.get());
 
+        log.info("Fetched subreddit with id: {}", id);
         return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDTO);
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleException(ResponseStatusException exception) {
+        log.error("Exception occurred: {}", exception.getMessage());
         // TODO: implement handling
         return ResponseEntity.status(exception.getStatusCode()).body(exception.getMessage());
     }
