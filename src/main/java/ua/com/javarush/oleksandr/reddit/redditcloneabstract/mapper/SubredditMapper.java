@@ -27,6 +27,7 @@ public abstract class SubredditMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(target = "createdDate", ignore = true)
+    // TODO: delete this field when was implemented substitution user in subreddit
     @Mapping(source = "username", target = "user", qualifiedByName = "getUserByUsername")
     abstract public Subreddit subredditRequestDtoToSubreddit(SubredditRequestDTO subredditRequestDTO);
 
