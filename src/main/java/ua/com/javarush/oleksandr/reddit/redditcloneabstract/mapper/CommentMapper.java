@@ -13,12 +13,11 @@ import java.util.List;
 public interface CommentMapper {
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "text", target = "text")
-    @Mapping(source = "user.userName", target = "userName")
+    @Mapping(source = "user.username", target = "userName")
     @Mapping(source = "post.id", target = "postId")
     CommentDTO commentToCommentDTO(Comment comment);
 
     @InheritInverseConfiguration
-    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "post", ignore = true)
     Comment commentDTOtoComment(CommentDTO commentDTO);
