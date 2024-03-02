@@ -21,13 +21,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long userId;
-
     private String email;
-
     private String username;
-
     private String password;
-
     private boolean enabled;
 
     @CreationTimestamp
