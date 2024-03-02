@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderMethodName = "with")
-public class CommentDto {
+public class CommentDTO {
 
     private Long id;
 
