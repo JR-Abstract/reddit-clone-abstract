@@ -52,7 +52,7 @@ public abstract class PostMapper {
     }
 
     @Autowired
-    private void setPostService(SubredditService subredditService, UserService userService) {
+    protected void setPostService(SubredditService subredditService, UserService userService) {
         this.subredditService = subredditService;
         this.userService = userService;
     }
