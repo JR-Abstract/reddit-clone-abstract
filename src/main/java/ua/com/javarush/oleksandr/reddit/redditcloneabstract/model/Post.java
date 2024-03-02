@@ -65,6 +65,7 @@ public class Post {
     private String url;
 
     @Column(name = "vote_count")
+    @Builder.Default
     private int voteCount = 0;
 
     @ToString.Exclude
