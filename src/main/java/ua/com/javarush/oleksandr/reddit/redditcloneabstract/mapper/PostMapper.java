@@ -17,28 +17,22 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 @Mapper(componentModel = "spring")
 public abstract class PostMapper {
 
+    @Autowired
     private SubredditService subredditService;
+
+    @Autowired
     private UserService userService;
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "postName", target = "postName")
-    @Mapping(source = "description", target = "description")
-    @Mapping(source = "url", target = "url")
-    @Mapping(source = "subredditId", target = "subreddit", qualifiedByName = "findSubredditById")
-    @Mapping(source = "userId", target = "user", qualifiedByName = "findUserById")
+    @Mapping(target = "subreddit", source = "subredditId", qualifiedByName = "findSubredditById")
+    @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "voteCount", ignore = true)
-    abstract public Post dtoToPost(PostRequestDTO dto);
+    public abstract Post dtoToPost(PostRequestDTO dto);
 
-
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "postName", target = "postName")
-    @Mapping(source = "description", target = "description")
-    @Mapping(source = "url", target = "url")
-    @Mapping(source = "voteCount", target = "voteCount")
     @Mapping(target = "subredditName", expression = "java(post.getSubreddit().getName())")
     @Mapping(target = "userName", expression = "java(post.getUser().getUsername())")
-    abstract public PostResponseDTO postToDTO(Post post);
+    public abstract PostResponseDTO postToDTO(Post post);
 
     @Named("findSubredditById")
     protected Subreddit findSubredditById(Long id) {
@@ -49,11 +43,5 @@ public abstract class PostMapper {
     @Named("findUserById")
     protected User findUserById(Long id) {
         return userService.findUserById(id);
-    }
-
-    @Autowired
-    protected void setPostService(SubredditService subredditService, UserService userService) {
-        this.subredditService = subredditService;
-        this.userService = userService;
     }
 }
