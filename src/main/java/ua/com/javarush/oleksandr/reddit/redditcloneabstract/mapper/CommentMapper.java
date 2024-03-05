@@ -18,8 +18,6 @@ public interface CommentMapper {
     CommentDTO commentToCommentDTO(Comment comment);
 
     @InheritInverseConfiguration
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "post", ignore = true)
     Comment commentDTOtoComment(CommentDTO commentDTO);
 
     List<CommentDTO> commentListToCommentDTOList(List<Comment> comments);
