@@ -16,6 +16,7 @@ public interface UserMapper {
 
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "enabled", ignore = true)
+    @Mapping(target = "created_at", ignore = true)
     @Mapping(source = "email", target = "email")
     @Mapping(source = "username", target = "username")
     @Mapping(source = "password", target = "password")
