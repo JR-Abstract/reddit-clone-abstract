@@ -6,24 +6,21 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.PostMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.SubredditService;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,7 +29,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
-    private final SubredditService subredditService;
+    private final PostMapper postMapper;
 
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDTO postRequestDTO,
@@ -42,34 +39,57 @@ public class PostController {
             return handleErrorsFromBindingResult(bindingResult);
         }
 
-        var post = mapPostRequestDtoToPost(postRequestDTO);
+        var post = postMapper.dtoToPost(postRequestDTO);
         postService.save(post);
 
-        return ResponseEntity.ok().build();
+        URI location = buildPostLocationUri(post.getId());
+
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping
-    public List<PostResponseDTO> getAllPosts() {
+    public ResponseEntity<List<PostResponseDTO>> getAllPosts() {
 
-        return postService.findAll().stream()
-                .map(this::mapPostToPostResponseDto)
+        List<PostResponseDTO> postResponseDtos = postService.findAll().stream()
+                .map(postMapper::postToDTO)
                 .toList();
+
+        return ResponseEntity.ok(postResponseDtos);
     }
 
     @GetMapping("/{id}")
-    public PostResponseDTO getPost(@PathVariable Long id) {
-        return mapPostToPostResponseDto(postService.findById(id));
+    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
+
+        Optional<Post> foundPost = postService.findById(id);
+
+        var foundPostDto = foundPost.map(postMapper::postToDTO)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Post with id = %d not found", id)
+                ));
+
+        return ResponseEntity.ok(foundPostDto);
     }
 
     @GetMapping("/by-user/{username}")
-    public List<PostResponseDTO> getPostsByUsername(@PathVariable String username) {
+    public ResponseEntity<List<PostResponseDTO>> getPostsByUsername(@PathVariable String username) {
 
-        return postService.findPostsByUsername(username).stream()
-                .map(this::mapPostToPostResponseDto)
+        var posts = postService.findPostsByUsername(username).stream()
+                .map(postMapper::postToDTO)
                 .toList();
+
+        return ResponseEntity.ok(posts);
     }
 
-    private static ResponseEntity<Map<String, Object>> handleErrorsFromBindingResult(BindingResult bindingResult) {
+    private URI buildPostLocationUri(Long postId) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(postId)
+                .toUri();
+    }
+
+    private ResponseEntity<Map<String, Object>> handleErrorsFromBindingResult(BindingResult bindingResult) {
 
         List<String> errorMessages = bindingResult.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -81,36 +101,5 @@ public class PostController {
         errors.put("errors", errorMessages);
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    private Post mapPostRequestDtoToPost(PostRequestDTO postRequestDTO) {
-
-        User currentUser = User.with()
-                .userId(postRequestDTO.getUserId())
-                .build();
-
-        Subreddit subreddit = subredditService.findById(postRequestDTO.getSubredditId()).orElse(null);
-
-        return Post.with()
-                .id(postRequestDTO.getId())
-                .user(currentUser)
-                .subreddit(subreddit)
-                .postName(postRequestDTO.getPostName())
-                .url(postRequestDTO.getUrl())
-                .description(postRequestDTO.getDescription())
-                .build();
-    }
-
-    private PostResponseDTO mapPostToPostResponseDto(Post post) {
-
-        return PostResponseDTO.with()
-                .id(post.getId())
-                .postName(post.getPostName())
-                .description(post.getDescription())
-                .url(post.getUrl())
-                .voteCount(post.getVoteCount())
-                .subredditName(post.getSubreddit().getName())
-                .userName(post.getUser().getUsername())
-                .build();
     }
 }
