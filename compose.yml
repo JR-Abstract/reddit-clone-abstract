@@ -4,7 +4,7 @@ services:
   postgres:
     profiles:
       - development
-    image: postgres:latest
+    image: postgres:16.2
     environment:
         - POSTGRES_USER=root
         - POSTGRES_PASSWORD=root
