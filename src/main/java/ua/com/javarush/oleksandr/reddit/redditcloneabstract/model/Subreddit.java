@@ -33,7 +33,7 @@ public class Subreddit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, columnDefinition = "BIGINT")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255)")
@@ -43,7 +43,7 @@ public class Subreddit {
     private String description;
 
     @CreationTimestamp
-    @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "DATETIME(6)")
+    @Column(name = "created_date", nullable = false, updatable = false)
     private ZonedDateTime createdDate;
 
     @ToString.Exclude
