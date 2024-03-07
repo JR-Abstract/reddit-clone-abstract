@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderMethodName = "with")
-public class SubredditDTO {
+public class SubredditResponseDTO {
 
     private Long id;
 
