@@ -1,25 +1,43 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper;
 
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL)
-public interface CommentMapper {
-    @Mapping(source = "createdDate", target = "createdDate")
-    @Mapping(source = "text", target = "text")
+public abstract class CommentMapper {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PostService postService;
+
     @Mapping(source = "user.username", target = "userName")
     @Mapping(source = "post.id", target = "postId")
-    CommentDTO commentToCommentDTO(Comment comment);
+    public abstract  CommentDTO commentToCommentDTO(Comment comment);
 
     @InheritInverseConfiguration
-    Comment commentDTOtoComment(CommentDTO commentDTO);
+    @Mapping(target = "user", source = "userName", qualifiedByName = "getUserByUsername")
+    @Mapping(target = "post", source = "postId", qualifiedByName = "getPostById")
+    public abstract Comment commentDTOtoComment(CommentDTO commentDTO);
 
-    List<CommentDTO> commentListToCommentDTOList(List<Comment> comments);
-    List<Comment> commentDTOListToCommentList(List<CommentDTO> commentDTOS);
+    public abstract  List<CommentDTO> commentListToCommentDTOList(List<Comment> comments);
+    public abstract  List<Comment> commentDTOListToCommentList(List<CommentDTO> commentDTOS);
+
+    @Named(value = "getPostById")
+    protected Post getPostById(Long id) {
+        return postService.findById(id);
+    }
+
+    @Named(value = "getUserByUsername")
+    protected User getUserByUsername(String username) {
+        return userService.findUserByUsername(username);
+    }
 }

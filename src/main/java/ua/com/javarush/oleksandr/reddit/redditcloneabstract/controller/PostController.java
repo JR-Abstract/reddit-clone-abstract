@@ -59,16 +59,9 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
+        Post post = postService.findById(id);
 
-        Optional<Post> foundPost = postService.findById(id);
-
-        var foundPostDto = foundPost.map(postMapper::postToDTO)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("Post with id = %d not found", id)
-                ));
-
-        return ResponseEntity.ok(foundPostDto);
+        return ResponseEntity.ok(postMapper.postToDTO(post));
     }
 
     @GetMapping("/by-user/{username}")
