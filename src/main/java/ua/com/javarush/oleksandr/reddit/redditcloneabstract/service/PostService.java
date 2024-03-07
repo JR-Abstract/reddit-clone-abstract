@@ -7,6 +7,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,8 +21,8 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public Post findById(Long id) {
-        return postRepository.findById(id).orElse(null);
+    public Optional<Post> findById(Long id) {
+        return postRepository.findById(id);
     }
 
     public Collection<Post> findAll() {
@@ -29,6 +30,10 @@ public class PostService {
     }
 
     public Collection<Post> findPostsByUsername(String username) {
-        return postRepository.findByUserUsername(username);
+        return postRepository.findByUser_Username(username);
+    }
+
+    public Integer countAllBySubreddit_Id(Long id) {
+        return postRepository.countAllBySubreddit_Id(id);
     }
 }

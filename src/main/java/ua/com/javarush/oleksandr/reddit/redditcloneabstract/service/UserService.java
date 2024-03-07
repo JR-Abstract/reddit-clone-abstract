@@ -1,25 +1,29 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
-    private PostRepository postRepository;
 
-    public User findByUsername(String username) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        } else {
-            throw new RuntimeException("User not found with username: " + username);
-        }
+    private final UserRepository userRepository;
+
+
+    // TODO: implement handling exception
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

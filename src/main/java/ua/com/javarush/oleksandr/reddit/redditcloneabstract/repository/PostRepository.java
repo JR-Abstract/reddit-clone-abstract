@@ -9,5 +9,7 @@ import java.util.Collection;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Collection<Post> findByUserUsername(String username);
+    Collection<Post> findByUser_Username(String username);
+
+    Integer countAllBySubreddit_Id(Long id);
 }
