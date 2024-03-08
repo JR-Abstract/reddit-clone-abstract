@@ -11,7 +11,9 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "url")
 @Builder(builderMethodName = "with")
-public class PostRequest {
+public class PostRequestDto {
+
+    private Long id;
 
     @NotNull(message = "Post name cannot be null.")
     @NotBlank(message = "Post name must not be blank.")

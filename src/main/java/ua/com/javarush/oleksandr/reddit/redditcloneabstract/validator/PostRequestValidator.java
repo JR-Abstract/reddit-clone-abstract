@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequest;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
 
 @Component
@@ -16,12 +16,12 @@ public class PostRequestValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return PostRequest.class.equals(clazz);
+        return PostRequestDto.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
-        PostRequest request = (PostRequest) target;
+        PostRequestDto request = (PostRequestDto) target;
 
         String url = request.getUrl();
 
