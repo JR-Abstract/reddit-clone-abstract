@@ -6,8 +6,8 @@ import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDTO;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequest;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponse;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
@@ -28,11 +28,11 @@ public abstract class PostMapper {
     @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "voteCount", ignore = true)
-    public abstract Post dtoToPost(PostRequestDTO dto);
+    public abstract Post dtoToPost(PostRequest dto);
 
     @Mapping(target = "subredditName", expression = "java(post.getSubreddit().getName())")
     @Mapping(target = "userName", expression = "java(post.getUser().getUsername())")
-    public abstract PostResponseDTO postToDTO(Post post);
+    public abstract PostResponse postToDTO(Post post);
 
     @Named("findSubredditById")
     protected Subreddit findSubredditById(Long id) {

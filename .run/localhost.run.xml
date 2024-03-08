@@ -1,12 +1,20 @@
 <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="localhost" type="SpringBootApplicationConfigurationType"
                    factoryName="Spring Boot">
-        <option name="ALTERNATIVE_JRE_PATH" value="17"/>
+        <option name="ALTERNATIVE_JRE_PATH" value="corretto-17"/>
         <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
+        <envs>
+            <env name="COMPOSE_ENABLED" value="false"/>
+            <env name="COMPOSE_LIFECYCLE" value="start-and-stop"/>
+            <env name="COMPOSE_PROFILE" value="development"/>
+            <env name="DB_DIALECT" value="PostgreSQLDialect"/>
+            <env name="DB_DRIVER" value="org.postgresql.Driver"/>
+            <env name="DB_PASSWORD" value="5nm66D6d4rsmPpBcbEcwCGRsIwfrAh53"/>
+            <env name="DB_URL"
+                 value="jdbc:postgresql://dpg-cnge556g1b2c73c3hmqg-a.frankfurt-postgres.render.com/abstract_reddit"/>
+            <env name="DB_USER" value="root"/>
+        </envs>
         <module name="reddit-clone-abstract"/>
-        <selectedOptions>
-            <option name="environmentVariables"/>
-        </selectedOptions>
         <option name="SPRING_BOOT_MAIN_CLASS"
                 value="ua.com.javarush.oleksandr.reddit.redditcloneabstract.RedditCloneAbstractApplication"/>
         <extension name="net.ashald.envfile">

@@ -1,17 +1,13 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "url")
 @Builder(builderMethodName = "with")
-public class PostResponseDTO {
+public class PostResponse {
 
     private Long id;
 
