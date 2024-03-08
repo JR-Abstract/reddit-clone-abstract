@@ -2,13 +2,14 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequest;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponse;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDto;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.PostMapper;
@@ -32,28 +33,31 @@ public class PostController {
     private final BindingResultService bindingResultService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequest postRequest,
+    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDto postRequestDto,
                                         BindingResult bindingResult) {
 
-        postRequestValidator.validate(postRequest, bindingResult);
+        postRequestValidator.validate(postRequestDto, bindingResult);
         bindingResultService.handle(bindingResult, PostCreationException::new);
 
-        var post = postMapper.dtoToPost(postRequest);
+        var post = postMapper.dtoToPost(postRequestDto);
         postService.save(post);
 
         URI location = buildPostLocationUri(post.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(location);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
     @GetMapping
     public ResponseEntity<?> getAllPosts() {
 
-        List<PostResponse> postResponses = postService.findAll().stream()
+        List<PostResponseDto> postResponsDtos = postService.findAll().stream()
                 .map(postMapper::postToDTO)
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(postResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(postResponsDtos);
     }
 
     @GetMapping("/{id}")

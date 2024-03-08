@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "url")
 @Builder(builderMethodName = "with")
-public class PostResponse {
+public class PostResponseDto {
 
     private Long id;
 
