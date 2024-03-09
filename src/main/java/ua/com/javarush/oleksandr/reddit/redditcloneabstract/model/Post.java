@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 @Table(uniqueConstraints = @UniqueConstraint(name = "uq_post_url", columnNames = "url"),
         indexes = {
                 @Index(name = "idx_post_postName", columnList = "post_name"),
-                //@Index(name = "idx_post_subreddit_id", columnList = "subreddit_id"),
+                @Index(name = "idx_post_subreddit_id", columnList = "subreddit_id"),
                 @Index(name = "idx_post_user_id", columnList = "user_id")
         }
 )
@@ -52,7 +52,6 @@ public class Post {
     @Column(name = "post_name", nullable = false)
     private String postName;
 
-    @Column(columnDefinition = "TINYTEXT")
     private String description;
 
     @CreationTimestamp
