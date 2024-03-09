@@ -11,13 +11,17 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.testcontainer.PostgresqlTestContainer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.time.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ActiveProfiles({"tc", "tc-auto"})
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         UserRepository.class}))
-@ActiveProfiles({"tc", "tc-auto"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
         scripts = {
@@ -35,9 +39,32 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    @DisplayName("findByName method should return User if User with given name is existed")
+    @DisplayName("findByName method should return User if User with given name exists")
     void findByUserName_shouldReturnUser_whenThereIsSomeSUserInTableWithEnteredUserName() {
-        String expectedUserName = "Michael";
-        assertEquals(expectedUserName, userRepository.findByUsername(expectedUserName).get().getUsername());
+        String userName = "Michael";
+        ZonedDateTime createdDate = ZonedDateTime.of(LocalDate
+                .parse("2016-06-22").atStartOfDay(), ZoneOffset.ofHours(0));
+
+        User actualUser = User.with()
+                .userId(1L)
+                .created_at(createdDate)
+                .email("michael.thomas@gmail.com")
+                .enabled(true)
+                .password("michael1234")
+                .username(userName)
+                .build();
+
+        User expectedUser = userRepository.findByUsername(userName).get();
+
+        assertEquals(expectedUser, actualUser);
+    }
+
+    @Test
+    @DisplayName("findByName method should return empty Optional if User with given name doesn't exist")
+    void findByName_shouldReturnEmptyOptional_whenThereIsNotAnyUserInTableWithEnteredName() {
+
+        String fakeName = "fakeName";
+
+        assertTrue(userRepository.findByUsername(fakeName).isEmpty());
     }
 }
