@@ -8,9 +8,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.SubredditRepository;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.validator.SubredditValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +27,8 @@ public class SubredditService {
 
     private final SubredditRepository subredditRepository;
     private final MessageSource messageSource;
+    private final SubredditValidator subredditValidator;
+    private final BindingResultService bindingResultService;
 
     public List<Subreddit> findAll() {
 
@@ -58,6 +64,10 @@ public class SubredditService {
     @Transactional
     public void save(Subreddit subreddit) {
 
+        Errors errors = new BeanPropertyBindingResult(subreddit, "subreddit");
+        subredditValidator.validate(subreddit, errors);
+        bindingResultService.handle(errors, SubredditCreateException::new);
+
         try {
             subredditRepository.save(subreddit);
 
@@ -73,5 +83,9 @@ public class SubredditService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     messageSource.getMessage("subreddit.creation.failure", null, LocaleContextHolder.getLocale()), e);
         }
+    }
+
+    public boolean isSubredditNameTakenByUser(Subreddit subreddit) {
+        return subredditRepository.existsSubredditByNameAndUser(subreddit.getName(), subreddit.getUser());
     }
 }
