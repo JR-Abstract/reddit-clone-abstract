@@ -3,21 +3,18 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditRequestDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.SubredditMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ErrorHandlerService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.SubredditService;
 
 import java.util.List;
@@ -31,21 +28,22 @@ public class SubredditController {
 
     private final SubredditService subredditService;
     private final SubredditMapper subredditMapper;
+    private final ErrorHandlerService errorHandlerService;
+    private final MessageSource messageSource;
 
     @PostMapping
     public ResponseEntity<Void> createSubreddit(@RequestBody @Valid SubredditRequestDTO subredditRequestDTO,
-                                                               BindingResult bindingResult) {
-        // TODO: implement subredditValidator.validate(subredditDTO);
-        if (bindingResult.hasErrors()) {
-            // TODO: implement throw exception
-            log.warn("Invalid subreddit data: {}", bindingResult.getAllErrors());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid subreddit data");
-        }
+                                                BindingResult bindingResult) {
 
-        Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(subredditRequestDTO);
+        errorHandlerService.handle(bindingResult, SubredditCreateException::new);
 
-        subredditService.save(subreddit);
-        log.info("Subreddit created: {}", subreddit);
+        log.debug(messageSource.getMessage("log.subreddit.create", new Object[]{subredditRequestDTO.getName()},
+                LocaleContextHolder.getLocale()));
+
+        subredditService.save(subredditMapper.toEntity(subredditRequestDTO));
+
+        log.info(messageSource.getMessage("log.subreddit.created", new Object[]{subredditRequestDTO.getName()},
+                LocaleContextHolder.getLocale()));
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -53,38 +51,33 @@ public class SubredditController {
     @GetMapping
     public ResponseEntity<List<SubredditResponseDTO>> getAllSubreddits() {
 
-        List<SubredditResponseDTO> subredditResponseDTOS = subredditService.findAll()
+        log.debug(messageSource.getMessage("log.subreddit.fetchAll", null, LocaleContextHolder.getLocale()));
+
+        var subredditResponseDtoList = subredditService.findAll()
                 .stream()
-                .map(subredditMapper::subredditToSubredditResponseDto)
+                .map(subredditMapper::toDto)
                 .toList();
 
-        log.info("Fetched all subreddits");
-        return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDTOS);
+        log.info(messageSource.getMessage("log.subreddit.fetchAll.count", new Object[]{subredditResponseDtoList.size()},
+                LocaleContextHolder.getLocale()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SubredditResponseDTO> getSubreddit(@PathVariable Long id) {
+    public ResponseEntity<?> getSubreddit(@PathVariable Long id) {
 
-        Optional<Subreddit> subredditOptional = subredditService.findById(id);
+        log.debug(messageSource.getMessage("log.subreddit.fetch", new Object[]{id}, LocaleContextHolder.getLocale()));
 
-        if (subredditOptional.isEmpty()) {
-            log.warn("Subreddit not found with id: {}", id);
+        Optional<Subreddit> subredditResult = subredditService.findById(id);
 
-            // TODO: implement throw exception
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subreddit not found");
-        }
+        if (subredditResult.isEmpty()) {
+            log.error(messageSource.getMessage("log.subreddit.notFound", new Object[]{id},
+                    LocaleContextHolder.getLocale()));
 
-        SubredditResponseDTO subredditResponseDTO = subredditMapper.
-                subredditToSubredditResponseDto(subredditOptional.get());
+        } else log.info(messageSource.getMessage("log.subreddit.fetched", new Object[]{id},
+                LocaleContextHolder.getLocale()));
 
-        log.info("Fetched subreddit with id: {}", id);
-        return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDTO);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<String> handleException(ResponseStatusException exception) {
-        log.error("Exception occurred: {}", exception.getMessage());
-        // TODO: implement handling
-        return ResponseEntity.status(exception.getStatusCode()).body(exception.getMessage());
+        return ResponseEntity.of(subredditResult.map(subredditMapper::toDto));
     }
 }
