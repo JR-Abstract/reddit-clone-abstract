@@ -11,7 +11,8 @@ import java.util.function.Function;
 @Service
 public class BindingResultService {
 
-    public void handle(BindingResult bindingResult, Function<List<FieldErrorEntity>, ? extends RedditException> errorHandler) {
+    public void handle(BindingResult bindingResult,
+                       Function<List<FieldErrorEntity>, ? extends RedditException> errorHandler) {
 
         if (bindingResult.hasErrors()) {
             var errors = bindingResult.getFieldErrors().stream()

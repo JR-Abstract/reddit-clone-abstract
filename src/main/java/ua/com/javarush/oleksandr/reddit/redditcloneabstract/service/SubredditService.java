@@ -26,25 +26,30 @@ public class SubredditService {
 
     public List<Subreddit> findAll() {
 
-        log.debug(messageSource.getMessage("log.subreddit.service.findAll.start", null, LocaleContextHolder.getLocale()));
+        log.debug(messageSource.getMessage("log.subreddit.service.findAll.start", null,
+                LocaleContextHolder.getLocale()));
 
         List<Subreddit> subreddits = subredditRepository.findAll();
 
-        log.debug(messageSource.getMessage("log.subreddit.service.findAll.success", new Object[]{subreddits.size()}, LocaleContextHolder.getLocale()));
+        log.debug(messageSource.getMessage("log.subreddit.service.findAll.success", new Object[]{subreddits.size()},
+                LocaleContextHolder.getLocale()));
 
         return subreddits;
     }
 
     public Optional<Subreddit> findById(@NotNull Long id) {
 
-        log.debug(messageSource.getMessage("log.subreddit.service.findById.start", new Object[]{id}, LocaleContextHolder.getLocale()));
+        log.debug(messageSource.getMessage("log.subreddit.service.findById.start", new Object[]{id},
+                LocaleContextHolder.getLocale()));
 
         Optional<Subreddit> subredditResult = subredditRepository.findById(id);
 
         if (subredditResult.isPresent()) {
-            log.debug(messageSource.getMessage("log.subreddit.service.findById.success", new Object[]{id}, LocaleContextHolder.getLocale()));
+            log.debug(messageSource.getMessage("log.subreddit.service.findById.success", new Object[]{id},
+                    LocaleContextHolder.getLocale()));
         } else {
-            log.debug(messageSource.getMessage("log.subreddit.service.findById.failure", new Object[]{id}, LocaleContextHolder.getLocale()));
+            log.debug(messageSource.getMessage("log.subreddit.service.findById.failure", new Object[]{id},
+                    LocaleContextHolder.getLocale()));
         }
 
         return subredditResult;

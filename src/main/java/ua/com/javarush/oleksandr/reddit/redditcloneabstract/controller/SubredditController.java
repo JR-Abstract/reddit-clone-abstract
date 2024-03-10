@@ -37,11 +37,13 @@ public class SubredditController {
 
         bindingResultService.handle(bindingResult, SubredditCreateException::new);
 
-        log.debug(messageSource.getMessage("log.subreddit.create", new Object[]{subredditRequestDTO.getName()}, LocaleContextHolder.getLocale()));
+        log.debug(messageSource.getMessage("log.subreddit.create", new Object[]{subredditRequestDTO.getName()},
+                LocaleContextHolder.getLocale()));
 
         subredditService.save(subredditMapper.toEntity(subredditRequestDTO));
 
-        log.info(messageSource.getMessage("log.subreddit.created", new Object[]{subredditRequestDTO.getName()}, LocaleContextHolder.getLocale()));
+        log.info(messageSource.getMessage("log.subreddit.created", new Object[]{subredditRequestDTO.getName()},
+                LocaleContextHolder.getLocale()));
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -56,7 +58,8 @@ public class SubredditController {
                 .map(subredditMapper::toDto)
                 .toList();
 
-        log.info(messageSource.getMessage("log.subreddit.fetchAll.count", new Object[]{subredditResponseDtoList.size()}, LocaleContextHolder.getLocale()));
+        log.info(messageSource.getMessage("log.subreddit.fetchAll.count", new Object[]{subredditResponseDtoList.size()},
+                LocaleContextHolder.getLocale()));
 
         return ResponseEntity.status(HttpStatus.OK).body(subredditResponseDtoList);
     }
