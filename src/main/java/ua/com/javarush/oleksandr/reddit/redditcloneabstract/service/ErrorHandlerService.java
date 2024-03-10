@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class BindingResultService {
+public class ErrorHandlerService {
 
     private final MessageSource messageSource;
 

@@ -28,7 +28,7 @@ public class SubredditService {
     private final SubredditRepository subredditRepository;
     private final MessageSource messageSource;
     private final SubredditValidator subredditValidator;
-    private final BindingResultService bindingResultService;
+    private final ErrorHandlerService errorHandlerService;
 
     public List<Subreddit> findAll() {
 
@@ -64,9 +64,7 @@ public class SubredditService {
     @Transactional
     public void save(Subreddit subreddit) {
 
-        Errors errors = new BeanPropertyBindingResult(subreddit, "subreddit");
-        subredditValidator.validate(subreddit, errors);
-        bindingResultService.handle(errors, SubredditCreateException::new);
+        validateSubredditNameNotTakenByUser(subreddit);
 
         try {
             subredditRepository.save(subreddit);
@@ -76,16 +74,27 @@ public class SubredditService {
             log.debug(successLog);
 
         } catch (Exception e) {
-            String errorLog = messageSource.getMessage("log.subreddit.service.creationError",
-                    new Object[]{subreddit.getName(), e.getMessage()}, LocaleContextHolder.getLocale());
-            log.error(errorLog);
-
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    messageSource.getMessage("subreddit.creation.failure", null, LocaleContextHolder.getLocale()), e);
+            handleException(subreddit, e);
         }
     }
 
     public boolean isSubredditNameTakenByUser(Subreddit subreddit) {
         return subredditRepository.existsSubredditByNameAndUser(subreddit.getName(), subreddit.getUser());
+    }
+
+    private void validateSubredditNameNotTakenByUser(Subreddit subreddit) {
+        Errors errors = new BeanPropertyBindingResult(subreddit, "subreddit");
+        subredditValidator.validate(subreddit, errors);
+        errorHandlerService.handle(errors, SubredditCreateException::new);
+    }
+
+    private void handleException(Subreddit subreddit, Exception e) {
+
+        String errMsg = messageSource.getMessage("log.subreddit.service.creationError",
+                new Object[]{subreddit.getName(), e.getMessage()}, LocaleContextHolder.getLocale());
+        log.error(errMsg);
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                messageSource.getMessage("subreddit.creation.failure", null, LocaleContextHolder.getLocale()), e);
     }
 }
