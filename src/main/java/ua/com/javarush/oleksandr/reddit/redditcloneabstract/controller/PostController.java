@@ -2,6 +2,7 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -43,7 +44,10 @@ public class PostController {
 
         URI location = buildPostLocationUri(post.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(location);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
     @GetMapping
