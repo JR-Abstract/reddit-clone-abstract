@@ -26,4 +26,12 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
+
+    public boolean isUsernameTaken(User user) {
+        return userRepository.findByUsername(user.getUsername()).isPresent();
+    }
+
+    public boolean isEmailTaken(User user) {
+        return userRepository.findByEmail(user.getEmail()).isPresent();
+    }
 }
