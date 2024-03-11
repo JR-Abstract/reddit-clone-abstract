@@ -1,16 +1,17 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "\"user\"",
+        uniqueConstraints = @UniqueConstraint(name = "uq_user_email", columnNames = "email"))
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,16 +23,33 @@ public class User {
     @Column(name = "id")
     private Long userId;
 
+    @Email
+    @NaturalId
     private String email;
 
     private String username;
 
     private String password;
 
+    @ManyToMany(mappedBy = "users")
+    @ToString.Exclude
+    @Setter(AccessLevel.PRIVATE)
+    private Set<Role> roles;
+
     private boolean enabled;
 
     @CreationTimestamp
-    @Column(name = "created",  nullable = false, updatable = false)
+    @Column(name = "created", nullable = false, updatable = false)
     private ZonedDateTime created_at;
 
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUsers().remove(this);
+    }
 }
