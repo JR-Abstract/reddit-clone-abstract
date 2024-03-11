@@ -23,6 +23,10 @@ public class Role {
     @Column(nullable = false)
     private String name;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    private ZonedDateTime createdAt = ZonedDateTime.now();
+
     @ManyToMany
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
@@ -42,8 +46,4 @@ public class Role {
         this.users.remove(user);
         user.getRoles().remove(this);
     }
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
-    private ZonedDateTime createdAt = ZonedDateTime.now();
 }
