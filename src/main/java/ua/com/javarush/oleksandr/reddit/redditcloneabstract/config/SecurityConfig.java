@@ -17,11 +17,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                                 .anyRequest().permitAll()
-//                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
-//                        .requestMatchers("/api/v1/posts/**").hasAuthority("ROLE_USER")
-//                        .requestMatchers("/api/v1/subreddit/**").hasAuthority("ROLE_USER")
-//                        .requestMatchers("/api/v1/vote/**").hasAuthority("ROLE_USER")
-//                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        //  .requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
+                        //  .requestMatchers("/api/v1/posts/**").hasAuthority("ROLE_USER")
+                        //  .requestMatchers("/api/v1/subreddit/**").hasAuthority("ROLE_USER")
+                        // .requestMatchers("/api/v1/vote/**").hasAuthority("ROLE_USER")
+                        //  .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         // .anyRequest().authenticated()
                 )
                 .build();
