@@ -22,7 +22,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/v1/subreddit/**").hasAuthority("ROLE_USER")
 //                        .requestMatchers("/api/v1/vote/**").hasAuthority("ROLE_USER")
 //                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-//                        .anyRequest().authenticated()
+                        // .anyRequest().authenticated()
                 )
                 .build();
     }
