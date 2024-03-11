@@ -16,7 +16,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
-                                .anyRequest().permitAll()
+                        .anyRequest().permitAll()
                         // .requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
                         // .requestMatchers("/api/v1/posts/**").hasAuthority("ROLE_USER")
                         // .requestMatchers("/api/v1/subreddit/**").hasAuthority("ROLE_USER")
