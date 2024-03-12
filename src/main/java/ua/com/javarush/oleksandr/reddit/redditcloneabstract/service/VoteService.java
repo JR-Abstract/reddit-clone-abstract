@@ -9,7 +9,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepos
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.VoteRepository;
 
-import java.util.Optional;
+// Removed the unused import statement
 
 import static ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteType.DOWNVOTE;
 import static ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteType.UPVOTE;
