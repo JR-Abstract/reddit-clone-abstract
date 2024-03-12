@@ -79,7 +79,8 @@ public class SecurityConfig {
 
             int affectedRows = insertStmt.executeUpdate(INIT_ROLE_SQL);
             if (affectedRows != 2) {
-                throw new SQLException("Could not initialize roles, expected to affect 2 rows, but affected " + affectedRows);
+                throw new SQLException(
+                        "Could not initialize roles, expected to affect 2 rows, but affected " + affectedRows);
             }
         }
     }
