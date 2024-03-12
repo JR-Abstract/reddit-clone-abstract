@@ -10,7 +10,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteType
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderMethodName = "with")
-public class VoteDTO {
+public class VoteDto {
     private Long id;
     private VoteType voteType;
     private Long userId;
