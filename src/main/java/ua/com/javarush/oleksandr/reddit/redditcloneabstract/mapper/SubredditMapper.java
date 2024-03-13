@@ -20,22 +20,22 @@ public abstract class SubredditMapper {
     @Autowired
     private PostService postService;
 
-    @Mapping(target = "numberOfPosts", source = "id", qualifiedByName = "getCountSubredditPosts")
+    @Mapping(target = "numberOfPosts", source = "id", qualifiedByName = "countAllBySubreddit_Id")
     public abstract SubredditResponseDTO subredditToSubredditResponseDto(Subreddit subreddit);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "user", source = "username", qualifiedByName = "getUserByUsername")
+    @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
     public abstract Subreddit subredditRequestDtoToSubreddit(SubredditRequestDTO subredditRequestDTO);
 
-    @Named(value = "getCountSubredditPosts")
-    protected Integer getCountSubredditPosts(Long id) {
+    @Named(value = "countAllBySubreddit_Id")
+    protected Integer countAllBySubreddit_Id(Long id) {
         return postService.countAllBySubreddit_Id(id);
     }
 
-    @Named(value = "getUserByUsername")
-    protected User getUserByUsername(String username) {
-        return userService.findUserByUsername(username);
+    @Named(value = "findUserById")
+    protected User findUserById(Long id) {
+        return userService.findUserById(id);
     }
 }
 
