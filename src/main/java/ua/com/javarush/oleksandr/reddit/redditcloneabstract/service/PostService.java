@@ -39,4 +39,8 @@ public class PostService {
     public Integer countAllBySubreddit_Id(Long id) {
         return postRepository.countAllBySubreddit_Id(id);
     }
+
+    public Optional<Post> findByUrl(String url) {
+        return postRepository.findFirstByUrl(url);
+    }
 }
