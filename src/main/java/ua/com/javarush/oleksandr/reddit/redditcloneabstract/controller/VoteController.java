@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.VoteDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.VoteDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.VoteService;
 
 @RestController
@@ -19,7 +19,7 @@ public class VoteController {
     }
 
     @PostMapping("/api/v1/votes")
-    public ResponseEntity<Void> saveVote(@RequestBody VoteDTO voteDto) {
+    public ResponseEntity<Void> saveVote(@RequestBody VoteDto voteDto) {
         voteService.vote(voteDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
