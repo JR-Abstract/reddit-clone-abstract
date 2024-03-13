@@ -9,7 +9,6 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +39,7 @@ public class PostService {
     public Integer countAllBySubreddit_Id(Long id) {
         return postRepository.countAllBySubreddit_Id(id);
     }
-    
+
     public boolean existsByUrl(String url) {
         return postRepository.existsByUrl(url);
     }

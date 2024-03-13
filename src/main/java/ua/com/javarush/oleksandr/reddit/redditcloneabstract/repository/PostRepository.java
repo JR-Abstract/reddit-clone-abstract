@@ -14,7 +14,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Integer countAllBySubreddit_Id(Long id);
 
-    Optional<Post> findFirstByUrl(String url);
-
     boolean existsByUrl(String url);
 }
