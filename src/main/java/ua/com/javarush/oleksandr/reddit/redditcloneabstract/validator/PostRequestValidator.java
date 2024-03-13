@@ -25,7 +25,7 @@ public class PostRequestValidator implements Validator {
 
         String url = request.getUrl();
 
-        if (postService.findByUrl(url).isPresent()) {
+        if (postService.existsByUrl(url)) {
             errors.rejectValue("url", "post.url.exist", "Url already exist");
         }
     }

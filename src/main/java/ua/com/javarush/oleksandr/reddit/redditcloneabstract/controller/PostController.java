@@ -11,7 +11,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.PostMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.BindingResultService;
@@ -20,7 +19,6 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.validator.PostReques
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/posts")
