@@ -21,12 +21,12 @@ public abstract class SubredditMapper {
     private PostService postService;
 
     @Mapping(target = "numberOfPosts", source = "id", qualifiedByName = "countAllBySubreddit_Id")
-    public abstract SubredditResponseDTO subredditToSubredditResponseDto(Subreddit subreddit);
+    public abstract SubredditResponseDTO toDto(Subreddit subreddit);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
-    public abstract Subreddit subredditRequestDtoToSubreddit(SubredditRequestDTO subredditRequestDTO);
+    public abstract Subreddit toEntity(SubredditRequestDTO subredditRequestDTO);
 
     @Named(value = "countAllBySubreddit_Id")
     protected Integer countAllBySubreddit_Id(Long id) {

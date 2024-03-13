@@ -40,7 +40,7 @@ class SubredditMapperTest {
                 .description("Subreddit description")
                 .build();
 
-        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(subreddit);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.toDto(subreddit);
 
         assertThat(subredditResponseDTO.getId()).isEqualTo(subreddit.getId());
         assertThat(subredditResponseDTO.getName()).isEqualTo(subreddit.getName());
@@ -54,7 +54,7 @@ class SubredditMapperTest {
                 .id(null)
                 .build();
 
-        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(subreddit);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.toDto(subreddit);
 
         assertThat(subredditResponseDTO.getNumberOfPosts()).isEqualTo(0);
     }
@@ -62,7 +62,7 @@ class SubredditMapperTest {
     @Test
     void subredditToSubredditDto_NullSubreddit_NullResponse() {
 
-        SubredditResponseDTO subredditResponseDTO = subredditMapper.subredditToSubredditResponseDto(null);
+        SubredditResponseDTO subredditResponseDTO = subredditMapper.toDto(null);
 
         assertThat(subredditResponseDTO).isNull();
     }
@@ -81,7 +81,7 @@ class SubredditMapperTest {
         User user = mock(User.class);
         when(userService.findUserById(anyLong())).thenReturn(user);
 
-        Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(subredditRequestDTO);
+        Subreddit subreddit = subredditMapper.toEntity(subredditRequestDTO);
 
         assertThat(subreddit.getId()).isNull();
         assertThat(subreddit.getName()).isEqualTo(subredditRequestDTO.getName());
@@ -93,7 +93,7 @@ class SubredditMapperTest {
     @Test
     void subredditDtoToSubreddit_NullDto_NullSubreddit() {
 
-        Subreddit subreddit = subredditMapper.subredditRequestDtoToSubreddit(null);
+        Subreddit subreddit = subredditMapper.toEntity(null);
 
         assertThat(subreddit).isNull();
     }

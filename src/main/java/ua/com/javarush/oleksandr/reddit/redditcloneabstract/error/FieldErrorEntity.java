@@ -1,15 +1,10 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.error;
 
-import lombok.AllArgsConstructor;
 import org.springframework.validation.FieldError;
 
-@AllArgsConstructor
-public class FieldErrorEntity {
-    private String field;
-    private String message;
+public record FieldErrorEntity(String field, String message) {
 
-    public FieldErrorEntity(FieldError fieldError) {
-        this.field = fieldError.getField();
-        this.message = fieldError.getDefaultMessage();
+    public FieldErrorEntity(FieldError error) {
+        this(error.getField(), error.getDefaultMessage());
     }
 }
