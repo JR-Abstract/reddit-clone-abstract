@@ -1,13 +1,14 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,8 +22,10 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public Optional<Post> findById(Long id) {
-        return postRepository.findById(id);
+    public Post findById(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        String.format("Post with id %d not found", id)));
     }
 
     public Collection<Post> findAll() {
