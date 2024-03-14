@@ -17,6 +17,7 @@ create table if not exists "user"
     primary key,
     created  timestamp,
     email    varchar(255),
+    activation_token varchar(36),
     enabled  boolean,
     password varchar(255),
     username varchar(255)
