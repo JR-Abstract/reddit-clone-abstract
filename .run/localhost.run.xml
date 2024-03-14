@@ -11,6 +11,7 @@
       <env name="DB_PASSWORD" value="root" />
       <env name="DB_URL" value="jdbc:postgresql://localhost:5432/abstract-reddit" />
       <env name="DB_USER" value="root" />
+      <env name="APPLICATION_URL" value="http://localhost:8080" />
     </envs>
     <module name="reddit-clone-abstract" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="ua.com.javarush.oleksandr.reddit.redditcloneabstract.RedditCloneAbstractApplication" />
