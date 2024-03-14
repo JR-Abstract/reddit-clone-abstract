@@ -124,3 +124,21 @@ create table if not exists vote
 
 alter table vote
     owner to root;
+
+CREATE TABLE IF NOT EXISTS role
+(
+    id   BIGSERIAL,
+    name VARCHAR(255),
+    created_at timestamp not null,
+    CONSTRAINT "role_pk" PRIMARY KEY (id),
+    CONSTRAINT "uq_role_name" UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS user_role
+(
+    user_id BIGSERIAL,
+    role_id BIGSERIAL,
+    CONSTRAINT "users_roles_pk" PRIMARY KEY (user_id, role_id),
+    CONSTRAINT "user_role_user_id_fk" FOREIGN KEY (user_id) REFERENCES "user" (id),
+    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES "user" (id)
+);

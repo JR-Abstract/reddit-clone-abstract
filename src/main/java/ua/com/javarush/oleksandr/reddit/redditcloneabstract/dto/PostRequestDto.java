@@ -2,11 +2,7 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
@@ -15,7 +11,7 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "url")
 @Builder(builderMethodName = "with")
-public class PostRequestDTO {
+public class PostRequestDto {
 
     private Long id;
 
