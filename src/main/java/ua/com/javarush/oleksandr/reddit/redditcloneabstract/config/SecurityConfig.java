@@ -25,6 +25,7 @@ public class SecurityConfig {
     private static final String POSTS_PATHS = "/api/v1/posts/**";
     private static final String SUBREDDIT_PATHS = "/api/v1/subreddit/**";
     private static final String VOTE_PATHS = "/api/v1/vote/**";
+    private static final String COMMENT_PATHS = "/api/v1/comments/**";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,9 +38,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API_AUTH_PATHS).permitAll()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
-                        .requestMatchers(SUBREDDIT_PATHS).hasRole("ADMIN")
+                        .requestMatchers(SUBREDDIT_PATHS).hasRole("USER")
                         .requestMatchers(POSTS_PATHS).hasRole("USER")
                         .requestMatchers(VOTE_PATHS).hasRole("USER")
+                        .requestMatchers(COMMENT_PATHS).hasRole("USER")
                 )
                 .anonymous(anon -> anon.authorities("ROLE_USER"))
                 .build();
@@ -78,7 +80,8 @@ public class SecurityConfig {
     private void initRole(DataSource dataSource) throws SQLException {
 
         log.debug("Initializing roles");
-        final String INIT_ROLE_SQL = " INSERT INTO role (name) VALUES  ('ROLE_ADMIN'), ('ROLE_USER'); ";
+        final String INIT_ROLE_SQL =
+                "INSERT INTO role (name, created_at) VALUES  ('ROLE_ADMIN', NOW()), ('ROLE_USER', now());";
 
         try (Connection connection = dataSource.getConnection();
 

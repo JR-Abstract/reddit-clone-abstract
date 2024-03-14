@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {

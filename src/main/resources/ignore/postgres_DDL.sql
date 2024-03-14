@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS role
 (
     id   BIGSERIAL,
     name VARCHAR(255),
+    created_at timestamp not null,
     CONSTRAINT "role_pk" PRIMARY KEY (id),
     CONSTRAINT "uq_role_name" UNIQUE (name)
 );
