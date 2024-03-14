@@ -15,14 +15,19 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     public void signup(RegisterRequest registerRequest) {
+        String email = registerRequest.getEmail();
+
         User user = userMapper.registerRequestToUser(registerRequest);
 
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         user.setPassword(encodedPassword);
 
         userRepository.save(user);
+
+        mailService.sendMessage(email, "Test", "Test text");
     }
 
     public User login(LoginRequest loginRequest) {
