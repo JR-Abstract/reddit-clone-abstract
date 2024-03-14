@@ -1,21 +1,8 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NaturalId;
 
@@ -50,6 +37,9 @@ public class User {
     private Set<Role> roles;
 
     private boolean enabled;
+
+    @Column(name = "activation_token")
+    private String activationToken;
 
     @CreationTimestamp
     @Column(name = "created", nullable = false, updatable = false)
