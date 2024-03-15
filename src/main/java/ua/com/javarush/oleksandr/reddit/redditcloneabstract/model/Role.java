@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "role",
         uniqueConstraints = @UniqueConstraint(name = "uq_role_name", columnNames = "name"))
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class Role {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    private ZonedDateTime createdAt = ZonedDateTime.now();
+    private ZonedDateTime createdAt;
 
     @ManyToMany
     @ToString.Exclude
@@ -45,5 +46,10 @@ public class Role {
     public void removeUser(User user) {
         this.users.remove(user);
         user.getRoles().remove(this);
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }
