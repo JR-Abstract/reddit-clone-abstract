@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "url")
-@Builder(builderMethodName = "with")
+@Builder(builderMethodName = "with", toBuilder = true)
 @ToString
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "uq_post_url", columnNames = "url"),
