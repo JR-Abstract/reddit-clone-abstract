@@ -20,7 +20,8 @@ create table if not exists "user"
     activation_token varchar(36),
     enabled  boolean,
     password varchar(255),
-    username varchar(255)
+    username varchar(255),
+    constraint uq_user_email unique (email)
     );
 
 alter table "user"
@@ -57,7 +58,8 @@ create table if not exists post
     references subreddit,
     user_id      bigint
     constraint post___fk
-    references "user"
+    references "user",
+    constraint uq_post_url unique (url)
     );
 
 alter table post
@@ -111,7 +113,7 @@ alter table token
 
 create table if not exists vote
 (
-    id        BIGSERIAL not null
+    vote_id        BIGSERIAL not null
     constraint vote_pk
     primary key,
     vote_type smallint,
@@ -141,5 +143,38 @@ CREATE TABLE IF NOT EXISTS user_role
     role_id BIGSERIAL,
     CONSTRAINT "users_roles_pk" PRIMARY KEY (user_id, role_id),
     CONSTRAINT "user_role_user_id_fk" FOREIGN KEY (user_id) REFERENCES "user" (id),
-    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES "user" (id)
+    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES role(id)
 );
+
+create index idx_comment_user_id
+    on comment (user_id);
+
+create index idx_comment_post_id
+    on comment (post_id);
+
+create index idx_post_postName
+    on post (post_name);
+
+create index idx_post_subreddit_id
+    on post (subreddit_id);
+
+create index idx_post_user_id
+    on post (user_id);
+
+create index idx_post_created_date
+    on post (created_date);
+
+create index idx_post_vote_count
+    on post (vote_count);
+
+create index idx_subreddit_name
+    on subreddit (name);
+
+create index idx_subreddit_user_id
+    on subreddit (user_id);
+
+create index idx_vote_user_id
+    on vote (user_id);
+
+create index idx_vote_post_id
+    on vote (post_id);
