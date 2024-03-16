@@ -55,7 +55,7 @@ public class PostController {
     public ResponseEntity<?> getAllPosts(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                          @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                          @RequestParam(value = "field", required = false) String field,
-                                         @RequestParam(value = "top", required = false, defaultValue = "false") Boolean top) {
+                                         @RequestParam(value = "top", required = false) boolean top) {
         Collection<Post> posts;
 
         if (nonNull(pageNumber) && nonNull(pageSize)) {

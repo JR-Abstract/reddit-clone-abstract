@@ -37,7 +37,9 @@ import java.time.LocalDateTime;
         indexes = {
                 @Index(name = "idx_post_postName", columnList = "post_name"),
                 @Index(name = "idx_post_subreddit_id", columnList = "subreddit_id"),
-                @Index(name = "idx_post_user_id", columnList = "user_id")
+                @Index(name = "idx_post_user_id", columnList = "user_id"),
+                @Index(name = "idx_post_created_date", columnList = "created_date"),
+                @Index(name = "idx_post_vote_count", columnList = "vote_count")
         }
 )
 public class Post {
