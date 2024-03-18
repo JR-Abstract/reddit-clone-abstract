@@ -1,13 +1,13 @@
-package security;
+package ua.com.javarush.oleksandr.reddit.redditcloneabstract.security;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 
 import java.util.Collection;
 
-public record AccountDetails(User user) implements UserDetails {
-
+public record AccountDetails(@NotNull User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -21,7 +21,7 @@ public record AccountDetails(User user) implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override
