@@ -1,25 +1,13 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NaturalId;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -44,8 +32,9 @@ public class User {
 
     private String password;
 
-    @ManyToMany(mappedBy = "users")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "users")
     @Setter(AccessLevel.PRIVATE)
     private Set<Role> roles;
 
@@ -54,6 +43,12 @@ public class User {
     @CreationTimestamp
     @Column(name = "created", nullable = false, updatable = false)
     private ZonedDateTime created_at;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    @ManyToMany(mappedBy = "subscribers", fetch = FetchType.LAZY)
+    private Set<Subreddit> subscriptions = new HashSet<>();
 
 
     public void addRole(Role role) {

@@ -11,8 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditRequestDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubredditResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.SubscriptionDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.SubredditMapper;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.UserMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ErrorHandlerService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.SubredditService;
@@ -26,6 +28,7 @@ import java.util.Optional;
 @Slf4j
 public class SubredditController {
 
+    private final UserMapper userMapper;
     private final SubredditService subredditService;
     private final SubredditMapper subredditMapper;
     private final ErrorHandlerService errorHandlerService;
@@ -79,5 +82,62 @@ public class SubredditController {
                 LocaleContextHolder.getLocale()));
 
         return ResponseEntity.of(subredditResult.map(subredditMapper::toDto));
+    }
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<?> subscribe(@RequestBody SubscriptionDto subscription) {
+
+        Long subredditId = subscription.subredditId();
+        Long userId = subscription.userId();
+
+        subredditService.subscribeUser(subredditId, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/unsubscribe")
+    public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionDto subscription) {
+
+        Long subredditId = subscription.subredditId();
+        Long userId = subscription.userId();
+
+        subredditService.unsubscribeUser(subredditId, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/{id}/subscribers")
+    public ResponseEntity<?> getSubredditSubscribers(@PathVariable Long id) {
+
+        log.debug(messageSource.getMessage("log.subreddit.findAllSubscribersById",
+                new Object[]{id},
+                LocaleContextHolder.getLocale()));
+
+        var subscribers = subredditService.findAllSubscribersById(id)
+                .stream()
+                .map(userMapper::map)
+                .toList();
+
+        log.info(messageSource.getMessage("log.subreddit.findAllSubscribersById.count",
+                new Object[]{id, subscribers.size()},
+                LocaleContextHolder.getLocale()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(subscribers);
+    }
+
+    @GetMapping("/{id}/subscribers/count")
+    public ResponseEntity<?> getCountSubredditSubscribers(@PathVariable Long id) {
+
+        log.debug(messageSource.getMessage("log.subreddit.getCountSubredditSubscribers",
+                new Object[]{id},
+                LocaleContextHolder.getLocale()));
+
+        var subscribersCount = subredditService.countSubscribersById(id);
+
+        log.info(messageSource.getMessage("log.subreddit.getCountSubredditSubscribers.count",
+                new Object[]{id, subscribersCount},
+                LocaleContextHolder.getLocale()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(subscribersCount);
     }
 }

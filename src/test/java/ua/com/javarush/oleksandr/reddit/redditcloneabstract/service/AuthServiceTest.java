@@ -39,7 +39,7 @@ public class AuthServiceTest {
         User user = new User();
         user.setUsername("testuser");
 
-        when(userMapper.registerRequestToUser(registerRequest)).thenReturn(user);
+        when(userMapper.map(registerRequest)).thenReturn(user);
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
 
         authService.signup(registerRequest);

@@ -17,7 +17,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public void signup(RegisterRequest registerRequest) {
-        User user = userMapper.registerRequestToUser(registerRequest);
+        User user = userMapper.map(registerRequest);
 
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         user.setPassword(encodedPassword);

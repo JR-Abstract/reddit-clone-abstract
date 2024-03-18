@@ -13,6 +13,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.error.SimpleErrorEnt
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditNotFoundException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -29,6 +30,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<?> handleException(PostNotFoundException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(SubredditNotFoundException.class)
+    public ResponseEntity<?> handleException(SubredditNotFoundException exception) {
         SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
