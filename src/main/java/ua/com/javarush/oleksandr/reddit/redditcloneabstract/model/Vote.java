@@ -11,9 +11,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteType
 @Builder(builderMethodName = "with")
 @Entity
 @Table(name = "vote",
-        uniqueConstraints = @UniqueConstraint(name = "unique_vote_id", columnNames = "id"),
         indexes = {
-                @Index(name = "idx_vote_id", columnList = "id", unique = true),
                 @Index(name = "idx_vote_user_id", columnList = "user_id"),
                 @Index(name = "idx_vote_post_id", columnList = "post_id")
         })
