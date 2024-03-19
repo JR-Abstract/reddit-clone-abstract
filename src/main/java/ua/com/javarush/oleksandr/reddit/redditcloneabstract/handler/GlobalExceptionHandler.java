@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.error.ErrorEntity;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.error.SimpleErrorEntity;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.*;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -30,6 +28,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<?> handleException(PostNotFoundException exception) {
         SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<?> handleException(LoginException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(SingUpException.class)
+    public ResponseEntity<?> handleException(SingUpException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
