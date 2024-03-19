@@ -17,7 +17,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final ActivationUserService activationUserService;
+    private final ActivationTokenService activationTokenService;
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -26,8 +26,8 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         user.setPassword(encodedPassword);
 
-        activationUserService.sendActivation(user);
         userRepository.save(user);
+        activationTokenService.sendActivation(user);
     }
 
     public User login(LoginRequest loginRequest) {

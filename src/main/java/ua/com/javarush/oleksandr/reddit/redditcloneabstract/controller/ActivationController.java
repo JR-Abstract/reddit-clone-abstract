@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ActivationUserService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ActivationTokenService;
 
 import java.net.URI;
 
@@ -18,15 +18,14 @@ import java.net.URI;
 @RequestMapping("/activation")
 public class ActivationController {
 
+    private final ActivationTokenService activationTokenService;
     @Value("${application.url}")
     private String url;
-
-    private final ActivationUserService activationUserService;
 
     @GetMapping("/confirm")
     public ResponseEntity<?> activateUser(@RequestParam("token") String token) {
 
-        boolean isActivated = activationUserService.activateUser(token);
+        boolean isActivated = activationTokenService.activateUser(token);
         String redirectUrl = url + "/activation/result?success=" + isActivated;
 
         HttpHeaders headers = new HttpHeaders();

@@ -17,7 +17,6 @@ create table if not exists "user"
     primary key,
     created  timestamp,
     email    varchar(255),
-    activation_token varchar(36),
     enabled  boolean,
     password varchar(255),
     username varchar(255)
@@ -143,3 +142,16 @@ CREATE TABLE IF NOT EXISTS user_role
     CONSTRAINT "user_role_user_id_fk" FOREIGN KEY (user_id) REFERENCES "user" (id),
     CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES "user" (id)
 );
+
+create table public.activation_token
+(
+    id          bigserial    not null,
+    activated   boolean      not null default false,
+    expiry_date timestamp(6) not null,
+    token       varchar(36)  not null,
+    user_id     bigint       not null,
+    primary key (id),
+    constraint idx_activation_token_token unique (token),
+    constraint fk_activation_token_user_id FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
+);
+

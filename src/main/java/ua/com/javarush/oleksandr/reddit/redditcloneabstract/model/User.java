@@ -38,9 +38,6 @@ public class User {
 
     private boolean enabled;
 
-    @Column(name = "activation_token")
-    private String activationToken;
-
     @CreationTimestamp
     @Column(name = "created", nullable = false, updatable = false)
     private ZonedDateTime created_at;

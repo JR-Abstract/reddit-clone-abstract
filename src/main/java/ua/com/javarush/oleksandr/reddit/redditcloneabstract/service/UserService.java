@@ -26,14 +26,4 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
-
-    public User findByActivationToken(String token) {
-        return userRepository.findByActivationToken(token)
-                .orElse(null);
-    }
-
-    @Transactional
-    public void update(User user) {
-        userRepository.save(user);
-    }
 }
