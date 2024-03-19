@@ -1,34 +1,37 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService;
-
-import static org.springframework.http.HttpStatus.OK;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
 
+
     @PostMapping("/signup")
-    public String signup(@RequestBody RegisterRequest registerRequest) {
-        authService.signup(registerRequest);
-        return String.valueOf(new ResponseEntity<>("User Registration Successful", OK));
+    public ResponseEntity<AuthenticationResponse> signup(@RequestBody RegisterRequest registerRequest) {
+
+        var response = authService.signup(registerRequest);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            authService.login(loginRequest);
-            return ResponseEntity.ok("Login Successful");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Failed");
-        }
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+
+        var response = authService.login(loginRequest);
+
+        return ResponseEntity.ok(response);
     }
 }
