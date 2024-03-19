@@ -1,138 +1,138 @@
-create table if not exists refresh_token
+CREATE TABLE IF NOT EXISTS refresh_token
 (
-    id           BIGSERIAL not null
-    constraint refresh_token_pk
-    primary key,
+    id           BIGSERIAL NOT NULL
+        CONSTRAINT refresh_token_pk
+            PRIMARY KEY,
     created_date timestamp,
     token        varchar(255)
-    );
+);
 
-alter table refresh_token
-    owner to root;
+ALTER TABLE refresh_token
+    OWNER TO root;
 
-create table if not exists "user"
+CREATE TABLE IF NOT EXISTS "user"
 (
-    id       BIGSERIAL NOT NULL
-    CONSTRAINT user_pk
-             PRIMARY KEY,
-    created  timestamp,
-    email    varchar(255),
+    id               BIGSERIAL NOT NULL
+        CONSTRAINT user_pk
+            PRIMARY KEY,
+    created          timestamp,
+    email            varchar(255),
     activation_token varchar(36),
-    enabled  boolean,
-    password varchar(255),
-    username varchar(255),
-    constraint uq_user_email unique (email)
-    );
+    enabled          boolean,
+    password         varchar(255),
+    username         varchar(255),
+    CONSTRAINT uq_user_email UNIQUE (email)
+);
 
-alter table "user"
-    owner to root;
+ALTER TABLE "user"
+    OWNER TO root;
 
-create table if not exists subreddit
+CREATE TABLE IF NOT EXISTS subreddit
 (
-    id           BIGSERIAL not null
-    constraint subreddit_pk
-    primary key,
+    id           BIGSERIAL NOT NULL
+        CONSTRAINT subreddit_pk
+            PRIMARY KEY,
     created_date timestamp,
     description  varchar(255),
     name         varchar(255),
     user_id      bigint
-    constraint subreddit_user_id_fk
-    references "user"
-    );
+        CONSTRAINT subreddit_user_id_fk
+            REFERENCES "user"
+);
 
-alter table subreddit
-    owner to root;
+ALTER TABLE subreddit
+    OWNER TO root;
 
-create table if not exists post
+CREATE TABLE IF NOT EXISTS post
 (
-    id           BIGSERIAL not null
-    constraint post_pk
-    primary key,
+    id           BIGSERIAL NOT NULL
+        CONSTRAINT post_pk
+            PRIMARY KEY,
     created_date timestamp,
     description  varchar(255),
     post_name    varchar(255),
     url          varchar(255),
     vote_count   integer,
     subreddit_id bigint
-    constraint post_subreddit_id_fk
-    references subreddit,
+        CONSTRAINT post_subreddit_id_fk
+            REFERENCES subreddit,
     user_id      bigint
-    constraint post___fk
-    references "user",
-    constraint uq_post_url unique (url)
-    );
+        CONSTRAINT post___fk
+            REFERENCES "user",
+    CONSTRAINT uq_post_url UNIQUE (url)
+);
 
-alter table post
-    owner to root;
+ALTER TABLE post
+    OWNER TO root;
 
-create table if not exists comment
+CREATE TABLE IF NOT EXISTS comment
 (
-    id           BIGSERIAL not null
-    constraint comment_pk
-    primary key,
+    id           BIGSERIAL NOT NULL
+        CONSTRAINT comment_pk
+            PRIMARY KEY,
     created_date timestamp,
     text         varchar(255),
     post_id      bigint
-    constraint comment_post_id_fk
-    references post,
+        CONSTRAINT comment_post_id_fk
+            REFERENCES post,
     user_id      bigint
-    constraint comment_user_id_fk
-    references "user"
-    );
-
-alter table comment
-    owner to root;
-
-create table if not exists subreddit_posts
-(
-    subreddit_id BIGSERIAL not null
-    constraint subreddit_posts_subreddit_id_fk
-    references subreddit,
-    posts_id     bigint
-    constraint subreddit_posts_post_id_fk
-    references post
+        CONSTRAINT comment_user_id_fk
+            REFERENCES "user"
 );
 
-alter table subreddit_posts
-    owner to root;
+ALTER TABLE comment
+    OWNER TO root;
 
-create table if not exists token
+CREATE TABLE IF NOT EXISTS subreddit_posts
 (
-    id          BIGSERIAL not null
-    constraint token_pk
-    primary key,
+    subreddit_id BIGSERIAL NOT NULL
+        CONSTRAINT subreddit_posts_subreddit_id_fk
+            REFERENCES subreddit,
+    posts_id     bigint
+        CONSTRAINT subreddit_posts_post_id_fk
+            REFERENCES post
+);
+
+ALTER TABLE subreddit_posts
+    OWNER TO root;
+
+CREATE TABLE IF NOT EXISTS token
+(
+    id          BIGSERIAL NOT NULL
+        CONSTRAINT token_pk
+            PRIMARY KEY,
     expiry_date timestamp,
     token       varchar(255),
     user_id     bigint
-    constraint token_user_id_fk
-    references "user"
-    );
-
-alter table token
-    owner to root;
-
-create table if not exists vote
-(
-    id        BIGSERIAL not null
-    constraint vote_pk
-    primary key,
-    vote_type smallint,
-    post_id   bigint
-    constraint vote_post_id_fk
-    references post,
-    user_id   bigint
-    constraint vote_user_id_fk
-    references "user"
+        CONSTRAINT token_user_id_fk
+            REFERENCES "user"
 );
 
-alter table vote
-    owner to root;
+ALTER TABLE token
+    OWNER TO root;
+
+CREATE TABLE IF NOT EXISTS vote
+(
+    id        BIGSERIAL NOT NULL
+        CONSTRAINT vote_pk
+            PRIMARY KEY,
+    vote_type smallint,
+    post_id   bigint
+        CONSTRAINT vote_post_id_fk
+            REFERENCES post,
+    user_id   bigint
+        CONSTRAINT vote_user_id_fk
+            REFERENCES "user"
+);
+
+ALTER TABLE vote
+    OWNER TO root;
 
 CREATE TABLE IF NOT EXISTS role
 (
-    id   BIGSERIAL,
-    name VARCHAR(255),
-    created_at timestamp not null,
+    id         BIGSERIAL,
+    name       VARCHAR(255),
+    created_at timestamp NOT NULL,
     CONSTRAINT "role_pk" PRIMARY KEY (id),
     CONSTRAINT "uq_role_name" UNIQUE (name)
 );
@@ -151,8 +151,8 @@ CREATE TABLE IF NOT EXISTS refresh_token
 (
     id            BIGSERIAL,
     value         VARCHAR(255) NOT NULL,
-    issued_at     timestamp NOT NULL,
-    expiration_at timestamp NOT NULL,
+    issued_at     timestamp    NOT NULL,
+    expiration_at timestamp    NOT NULL,
     user_id       bigint,
 
     CONSTRAINT "refresh_token_pk" PRIMARY KEY (id),
@@ -162,35 +162,35 @@ CREATE TABLE IF NOT EXISTS refresh_token
 CREATE INDEX refresh_token_expiration_at_idx
     ON refresh_token (expiration_at);
 
-create index idx_comment_user_id
-    on comment (user_id);
+CREATE INDEX idx_comment_user_id
+    ON comment (user_id);
 
-create index idx_comment_post_id
-    on comment (post_id);
+CREATE INDEX idx_comment_post_id
+    ON comment (post_id);
 
-create index idx_post_postName
-    on post (post_name);
+CREATE INDEX idx_post_postName
+    ON post (post_name);
 
-create index idx_post_subreddit_id
-    on post (subreddit_id);
+CREATE INDEX idx_post_subreddit_id
+    ON post (subreddit_id);
 
-create index idx_post_user_id
-    on post (user_id);
+CREATE INDEX idx_post_user_id
+    ON post (user_id);
 
-create index idx_post_created_date
-    on post (created_date);
+CREATE INDEX idx_post_created_date
+    ON post (created_date);
 
-create index idx_post_vote_count
-    on post (vote_count);
+CREATE INDEX idx_post_vote_count
+    ON post (vote_count);
 
-create index idx_subreddit_name
-    on subreddit (name);
+CREATE INDEX idx_subreddit_name
+    ON subreddit (name);
 
-create index idx_subreddit_user_id
-    on subreddit (user_id);
+CREATE INDEX idx_subreddit_user_id
+    ON subreddit (user_id);
 
-create index idx_vote_user_id
-    on vote (user_id);
+CREATE INDEX idx_vote_user_id
+    ON vote (user_id);
 
-create index idx_vote_post_id
-    on vote (post_id);
+CREATE INDEX idx_vote_post_id
+    ON vote (post_id);

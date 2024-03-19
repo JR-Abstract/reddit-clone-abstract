@@ -11,12 +11,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.InvalidPasswordException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.RoleByDefaultNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserDisabledException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserNotFoundException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.UserMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.RefreshToken;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Role;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
@@ -38,11 +36,7 @@ public class AuthService {
 
     private final RoleRepository roleRepository;
 
-    private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
-
-    private final ActivationUserService activationUserService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -60,15 +54,8 @@ public class AuthService {
     private String defaultRole;
 
     @Transactional
-    public AuthenticationResponse signup(RegisterRequest registerRequest) {
-
-        User user = userMapper.registerRequestToUser(registerRequest);
-
-        registerUser(user);
-
-        activationUserService.sendActivation(user);
-
-        return generateTokensAndAuthenticationResponse(user);
+    public void signup(User user) {
+        register(user);
     }
 
     @Transactional
@@ -81,7 +68,8 @@ public class AuthService {
         return generateTokensAndAuthenticationResponse(user);
     }
 
-    private void registerUser(User user) {
+    @Transactional
+    public void register(User user) {
 
         ensureUserDoesNotExist(user);
 
@@ -92,6 +80,10 @@ public class AuthService {
         role.addUser(user);
 
         userRepository.save(user);
+    }
+
+    public AuthenticationResponse proceedWithRegistration(User user) {
+        return generateTokensAndAuthenticationResponse(user);
     }
 
     private void ensureUserDoesNotExist(User user) {
@@ -169,7 +161,7 @@ public class AuthService {
         var jwtToken = jwtTokenProvider.generateToken(user);
         var jwtRefreshToken = jwtTokenProvider.generateRefreshToken(user);
 
-        saveRefreshTokenEntity(jwtRefreshToken,user);
+        saveRefreshTokenEntity(jwtRefreshToken, user);
 
         return AuthenticationResponse.with()
                 .accessToken(jwtToken)

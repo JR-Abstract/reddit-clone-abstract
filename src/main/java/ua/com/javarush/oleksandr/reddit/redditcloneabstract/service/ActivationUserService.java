@@ -3,7 +3,9 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
 
 import java.util.UUID;
 
@@ -15,6 +17,8 @@ public class ActivationUserService {
 
     private final MailService mailService;
     private final UserService userService;
+    private final AuthService authService;
+
     @Value("${application.url}")
     private String url;
 
@@ -37,15 +41,16 @@ public class ActivationUserService {
         return url + "/activation/confirm?token=" + token;
     }
 
-    public boolean activateUser(String token) {
+    public AuthenticationResponse activateUser(String token) {
         User user = userService.findByActivationToken(token);
 
-        if (isNull(user)) return false;
+        if (isNull(user)) throw new UserNotFoundException("USER NOT FOUND");
 
         user.setEnabled(true);
         user.setActivationToken(null);
+
         userService.update(user);
 
-        return true;
+        return authService.proceedWithRegistration(user);
     }
 }
