@@ -60,6 +60,7 @@ public class User {
     @Column(name = "created", nullable = false, updatable = false)
     private ZonedDateTime created_at;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens;
 
