@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.server.ResponseStatusException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDTO;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDto;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
@@ -55,7 +55,7 @@ class PostMapperTest {
         when(subredditService.findById(7L)).thenReturn(Optional.of(newSubreddit));
         when(userService.findUserById(5L)).thenReturn(newUser);
 
-        var postDto = PostRequestDTO.with()
+        var postDto = PostRequestDto.with()
                 .id(1L)
                 .postName("TestPost")
                 .description("Post description")
@@ -104,12 +104,12 @@ class PostMapperTest {
 
         assertThat(postDto)
                 .extracting(
-                        PostResponseDTO::getId,
-                        PostResponseDTO::getPostName,
-                        PostResponseDTO::getDescription,
-                        PostResponseDTO::getUrl,
-                        PostResponseDTO::getUserName,
-                        PostResponseDTO::getSubredditName)
+                        PostResponseDto::getId,
+                        PostResponseDto::getPostName,
+                        PostResponseDto::getDescription,
+                        PostResponseDto::getUrl,
+                        PostResponseDto::getUserName,
+                        PostResponseDto::getSubredditName)
                 .containsExactly(
                         post.getId(),
                         post.getPostName(),
@@ -125,7 +125,7 @@ class PostMapperTest {
         Long nonExistentSubredditId = 999L;
         when(subredditService.findById(nonExistentSubredditId)).thenReturn(Optional.empty());
 
-        PostRequestDTO postDto = new PostRequestDTO();
+        PostRequestDto postDto = new PostRequestDto();
         postDto.setSubredditId(nonExistentSubredditId);
 
         assertThatThrownBy(() -> postMapper.dtoToPost(postDto))

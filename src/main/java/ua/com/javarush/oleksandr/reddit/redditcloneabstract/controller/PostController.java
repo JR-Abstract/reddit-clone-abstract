@@ -2,26 +2,23 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDTO;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostRequestDto;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.PostResponseDto;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.PostMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.BindingResultService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.validator.PostRequestValidator;
 
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -30,55 +27,52 @@ public class PostController {
 
     private final PostService postService;
     private final PostMapper postMapper;
+    private final PostRequestValidator postRequestValidator;
+    private final BindingResultService bindingResultService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDTO postRequestDTO,
+    public ResponseEntity<?> createPost(@RequestBody @Valid PostRequestDto postRequestDto,
                                         BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            return handleErrorsFromBindingResult(bindingResult);
-        }
+        postRequestValidator.validate(postRequestDto, bindingResult);
+        bindingResultService.handle(bindingResult, PostCreationException::new);
 
-        var post = postMapper.dtoToPost(postRequestDTO);
+        var post = postMapper.dtoToPost(postRequestDto);
         postService.save(post);
 
         URI location = buildPostLocationUri(post.getId());
 
-        return ResponseEntity.created(location).build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getAllPosts() {
+    public ResponseEntity<?> getAllPosts() {
 
-        List<PostResponseDTO> postResponseDtos = postService.findAll().stream()
+        List<PostResponseDto> postResponsDtos = postService.findAll().stream()
                 .map(postMapper::postToDTO)
                 .toList();
 
-        return ResponseEntity.ok(postResponseDtos);
+        return ResponseEntity.status(HttpStatus.OK).body(postResponsDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id) {
+    public ResponseEntity<?> getPost(@PathVariable Long id) {
+        Post post = postService.findById(id);
 
-        Optional<Post> foundPost = postService.findById(id);
-
-        var foundPostDto = foundPost.map(postMapper::postToDTO)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("Post with id = %d not found", id)
-                ));
-
-        return ResponseEntity.ok(foundPostDto);
+        return ResponseEntity.ok(postMapper.postToDTO(post));
     }
 
     @GetMapping("/by-user/{username}")
-    public ResponseEntity<List<PostResponseDTO>> getPostsByUsername(@PathVariable String username) {
+    public ResponseEntity<?> getPostsByUsername(@PathVariable String username) {
 
         var posts = postService.findPostsByUsername(username).stream()
                 .map(postMapper::postToDTO)
                 .toList();
 
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
     private URI buildPostLocationUri(Long postId) {
@@ -87,19 +81,5 @@ public class PostController {
                 .path("/{id}")
                 .buildAndExpand(postId)
                 .toUri();
-    }
-
-    private ResponseEntity<Map<String, Object>> handleErrorsFromBindingResult(BindingResult bindingResult) {
-
-        List<String> errorMessages = bindingResult.getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.toList());
-
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("timestamp", LocalDateTime.now());
-        errors.put("status", HttpStatus.BAD_REQUEST.value());
-        errors.put("errors", errorMessages);
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

@@ -12,4 +12,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Collection<Post> findByUser_Username(String username);
 
     Integer countAllBySubreddit_Id(Long id);
+
+    boolean existsByUrl(String url);
 }

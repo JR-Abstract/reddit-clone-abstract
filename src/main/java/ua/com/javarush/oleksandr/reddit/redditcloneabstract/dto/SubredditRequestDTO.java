@@ -17,7 +17,5 @@ public class SubredditRequestDTO {
 
     private String description;
 
-    // TODO: delete this field when was implemented substitution user in subreddit
-    // It`s a temporary solution until another substitution is implemented
-    private String username;
+    private Long userId;
 }
