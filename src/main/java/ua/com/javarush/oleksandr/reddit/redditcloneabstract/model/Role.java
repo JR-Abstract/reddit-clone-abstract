@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -36,7 +37,7 @@ public class Role implements GrantedAuthority {
             inverseJoinColumns = @JoinColumn(name = "user_id"),
             foreignKey = @ForeignKey(name = "fk_user_role_role_id"),
             inverseForeignKey = @ForeignKey(name = "fk_user_role_user_id"))
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     public void addUser(User user) {
         this.users.add(user);
