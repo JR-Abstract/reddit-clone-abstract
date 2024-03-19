@@ -177,8 +177,10 @@ public class AuthService {
 
         var refreshTokenEntity = RefreshToken.with()
                 .value(jwtRefreshToken)
-                .expirationAt(Timestamp.from(jwtTokenProvider.extractClaim(jwtRefreshToken, Claims::getExpiration).toInstant()))
-                .issuedAt(Timestamp.from(jwtTokenProvider.extractClaim(jwtRefreshToken, Claims::getIssuedAt).toInstant()))
+                .expirationAt(Timestamp.from(jwtTokenProvider.extractClaim(jwtRefreshToken,
+                        Claims::getExpiration).toInstant()))
+                .issuedAt(Timestamp.from(jwtTokenProvider.extractClaim(jwtRefreshToken,
+                        Claims::getIssuedAt).toInstant()))
                 .user(user)
                 .build();
 

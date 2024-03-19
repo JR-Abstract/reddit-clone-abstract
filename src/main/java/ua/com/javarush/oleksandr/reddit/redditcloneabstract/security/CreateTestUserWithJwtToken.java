@@ -29,13 +29,15 @@ public class CreateTestUserWithJwtToken {
         String encodedToken = jwtTokenProvider.buildJwtToken(email, extraClaims, 84_600_000L * 1_000_000);
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement findUserStatement = connection.prepareStatement("SELECT * FROM \"user\" WHERE email = ?")) {
+             PreparedStatement findUserStatement = connection.prepareStatement(
+                     "SELECT * FROM \"user\" WHERE email = ?")) {
 
             findUserStatement.setString(1, email);
             ResultSet rs = findUserStatement.executeQuery();
 
             if (!rs.next()) {
-                PreparedStatement insertUserStatement = connection.prepareStatement("INSERT INTO \"user\"(email, username, password, enabled, created) VALUES (?, ?, ?, ?, ?)");
+                PreparedStatement insertUserStatement = connection.prepareStatement(
+                        "INSERT INTO \"user\"(email, username, password, enabled, created) VALUES (?, ?, ?, ?, ?)");
                 insertUserStatement.setString(1, email);
                 insertUserStatement.setString(2, "test");
                 insertUserStatement.setString(3, encoder.encode("test"));

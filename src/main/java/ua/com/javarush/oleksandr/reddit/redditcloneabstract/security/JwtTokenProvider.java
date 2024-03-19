@@ -124,7 +124,7 @@ public class JwtTokenProvider {
     }
 
     @PostConstruct
-    private void initSecretKey() {
+    public void initSecretKey() {
 
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
