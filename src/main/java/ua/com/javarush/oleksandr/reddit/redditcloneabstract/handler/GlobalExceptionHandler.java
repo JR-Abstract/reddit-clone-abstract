@@ -2,7 +2,6 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -22,8 +21,7 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @Value("${subreddit.create.exception}")
-    private String subredditCreateError;
+    private static final String subreddit_Create_Exception = "subreddit.create.exception";
 
     private final MessageSource messageSource;
 
@@ -43,7 +41,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleException(SubredditCreateException e) {
 
         var errorInfo = new ErrorEntity(
-                messageSource.getMessage(subredditCreateError, null, LocaleContextHolder.getLocale()),
+                messageSource.getMessage(subreddit_Create_Exception, null, LocaleContextHolder.getLocale()),
                 e.getErrors(),
                 System.currentTimeMillis()
         );
