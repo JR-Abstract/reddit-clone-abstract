@@ -1,19 +1,26 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.AccountDetails;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final MessageSource messageSource;
 
 
     // TODO: implement handling exception
@@ -25,6 +32,26 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        var userByEmail = userRepository.findByEmailAndFetchRoles(email);
+
+        if (userByEmail.isPresent()) {
+
+            return new AccountDetails(userByEmail.get());
+        }
+
+        throw createAccountNotFoundException(email);
+    }
+
+    private UsernameNotFoundException createAccountNotFoundException(String email) {
+
+        String message = messageSource.getMessage(
+                "account.not.found.by.email", new Object[]{email}, LocaleContextHolder.getLocale());
+        return new UsernameNotFoundException(message);
     }
 
     public User findByActivationToken(String token) {

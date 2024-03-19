@@ -6,9 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationEntryPoint;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationFilter;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtTokenProvider;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,6 +34,20 @@ public class SecurityConfig {
     private static final String VOTE_PATHS = "/api/v1/vote/**";
     private static final String COMMENT_PATHS = "/api/v1/comments/**";
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
+    private final JwtAuthenticationEntryPoint jwtAuthEntryPoint;
+
+    public SecurityConfig(
+            JwtTokenProvider jwtTokenProvider,
+            UserService userService,
+            JwtAuthenticationEntryPoint jwtAuthEntryPoint) {
+
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userService = userService;
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -36,6 +56,10 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+                .userDetailsService(userService)
+                .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthEntryPoint))
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API_AUTH_PATHS, ACTIVATION).permitAll()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
@@ -44,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(VOTE_PATHS).hasRole("USER")
                         .requestMatchers(COMMENT_PATHS).hasRole("USER")
                 )
-                .anonymous(anon -> anon.authorities("ROLE_USER"))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
@@ -82,7 +106,7 @@ public class SecurityConfig {
 
         log.debug("Initializing roles");
         final String INIT_ROLE_SQL =
-                "INSERT INTO role (name, created_at) VALUES  ('ROLE_ADMIN', NOW()), ('ROLE_USER', now());";
+                "INSERT INTO role (name, created_at) VALUES  ('ROLE_ADMIN', NOW()), ('ROLE_USER', NOW());";
 
         try (Connection connection = dataSource.getConnection();
 

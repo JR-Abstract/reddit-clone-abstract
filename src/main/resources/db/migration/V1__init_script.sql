@@ -12,9 +12,9 @@ alter table refresh_token
 
 create table if not exists "user"
 (
-    id       BIGSERIAL not null
-    constraint user_pk
-    primary key,
+    id       BIGSERIAL NOT NULL
+    CONSTRAINT user_pk
+             PRIMARY KEY,
     created  timestamp,
     email    varchar(255),
     activation_token varchar(36),
@@ -113,7 +113,7 @@ alter table token
 
 create table if not exists vote
 (
-    vote_id        BIGSERIAL not null
+    id        BIGSERIAL not null
     constraint vote_pk
     primary key,
     vote_type smallint,
@@ -143,8 +143,24 @@ CREATE TABLE IF NOT EXISTS user_role
     role_id BIGSERIAL,
     CONSTRAINT "users_roles_pk" PRIMARY KEY (user_id, role_id),
     CONSTRAINT "user_role_user_id_fk" FOREIGN KEY (user_id) REFERENCES "user" (id),
-    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES role(id)
+    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES role (id)
 );
+
+
+CREATE TABLE IF NOT EXISTS refresh_token
+(
+    id            BIGSERIAL,
+    value         VARCHAR(255) NOT NULL,
+    issued_at     timestamp NOT NULL,
+    expiration_at timestamp NOT NULL,
+    user_id       bigint,
+
+    CONSTRAINT "refresh_token_pk" PRIMARY KEY (id),
+    CONSTRAINT "refresh_token_user_fk" FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
+);
+
+CREATE INDEX refresh_token_expiration_at_idx
+    ON refresh_token (expiration_at);
 
 create index idx_comment_user_id
     on comment (user_id);
