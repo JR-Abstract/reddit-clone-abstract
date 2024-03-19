@@ -10,12 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import security.AccountDetails;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
-
-import java.util.Objects;
-import java.util.Optional;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.AccountDetails;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,9 +37,14 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        var userByEmail = userRepository.findByEmail(email);
+        var userByEmail = userRepository.findByEmailAndFetchRoles(email);
 
-        return new AccountDetails(userByEmail.orElseThrow(() -> createAccountNotFoundException(email)));
+        if (userByEmail.isPresent()) {
+
+            return new AccountDetails(userByEmail.get());
+        }
+
+        throw createAccountNotFoundException(email);
     }
 
     private UsernameNotFoundException createAccountNotFoundException(String email) {
