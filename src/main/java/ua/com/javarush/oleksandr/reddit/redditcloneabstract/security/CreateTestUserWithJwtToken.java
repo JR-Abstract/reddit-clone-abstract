@@ -4,22 +4,18 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
 public class CreateTestUserWithJwtToken {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final DataSource dataSource;
 
@@ -32,7 +28,6 @@ public class CreateTestUserWithJwtToken {
         extraClaims.put("authorities", authorities);
         String encodedToken = jwtTokenProvider.buildJwtToken(email, extraClaims, 84_600_000L * 1_000_000);
 
-        User savedUser = null;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findUserStatement = connection.prepareStatement("SELECT * FROM \"user\" WHERE email = ?")) {
 
