@@ -36,4 +36,12 @@ public class UserService {
     public void update(User user) {
         userRepository.save(user);
     }
+
+    public boolean isUsernameTaken(User user) {
+        return userRepository.findByUsername(user.getUsername()).isPresent();
+    }
+
+    public boolean isEmailTaken(User user) {
+        return userRepository.findByEmail(user.getEmail()).isPresent();
+    }
 }
