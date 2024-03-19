@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,10 +39,15 @@ public class User {
 
     @Email
     @NaturalId
+    @NotBlank(message = "Email is mandatory")
     private String email;
 
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 2, max = 30, message = "Username must be between 2 and 30 characters")
     private String username;
 
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
     @ManyToMany(mappedBy = "users")
