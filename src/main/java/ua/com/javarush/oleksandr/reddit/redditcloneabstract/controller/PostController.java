@@ -18,7 +18,10 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.validator.PostRequestValidator;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -49,13 +52,25 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts() {
+    public ResponseEntity<?> getAllPosts(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                         @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                         @RequestParam(value = "field", required = false) String field,
+                                         @RequestParam(value = "top", required = false) boolean top) {
+        Collection<Post> posts;
 
-        List<PostResponseDto> postResponsDtos = postService.findAll().stream()
+        if (nonNull(pageNumber) && nonNull(pageSize)) {
+            if (nonNull(field))
+                posts = postService.findAllByPagingAndSort(pageNumber, pageSize, field, top);
+            else
+                posts = postService.findAllByPaging(pageNumber, pageSize);
+        } else
+            posts = postService.findAll();
+
+        List<PostResponseDto> postResponseDtoList = posts.stream()
                 .map(postMapper::postToDTO)
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(postResponsDtos);
+        return ResponseEntity.status(HttpStatus.OK).body(postResponseDtoList);
     }
 
     @GetMapping("/{id}")
