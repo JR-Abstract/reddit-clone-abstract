@@ -145,6 +145,18 @@ CREATE TABLE IF NOT EXISTS user_role
     CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES role(id)
 );
 
+create table public.activation_token
+(
+    id          bigserial    not null,
+    activated   boolean      not null default false,
+    expiry_date timestamp(6) not null,
+    token       varchar(36)  not null,
+    user_id     bigint       not null,
+    primary key (id),
+    constraint idx_activation_token_token unique (token),
+    constraint fk_activation_token_user_id FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
+);
+
 create index idx_comment_user_id
     on comment (user_id);
 

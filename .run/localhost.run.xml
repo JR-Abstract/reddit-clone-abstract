@@ -1,21 +1,31 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="localhost" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-        <option name="ALTERNATIVE_JRE_PATH" value="17" />
-        <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-        <envs>
-            <env name="COMPOSE_ENABLED" value="true" />
-            <env name="COMPOSE_LIFECYCLE" value="start-and-stop" />
-            <env name="COMPOSE_PROFILE" value="development" />
-            <env name="DB_DIALECT" value="PostgreSQLDialect" />
-            <env name="DB_DRIVER" value="org.postgresql.Driver" />
-            <env name="DB_PASSWORD" value="root" />
-            <env name="DB_URL" value="jdbc:postgresql://localhost:5432/abstract-reddit" />
-            <env name="DB_USER" value="root" />
-        </envs>
-        <module name="reddit-clone-abstract" />
-        <option name="SPRING_BOOT_MAIN_CLASS" value="ua.com.javarush.oleksandr.reddit.redditcloneabstract.RedditCloneAbstractApplication" />
-        <method v="2">
-            <option name="Make" enabled="true" />
-        </method>
-    </configuration>
+  <configuration default="false" name="localhost" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="COMPOSE_ENABLED" value="true" />
+      <env name="COMPOSE_LIFECYCLE" value="start-and-stop" />
+      <env name="COMPOSE_PROFILE" value="development" />
+      <env name="DB_DIALECT" value="PostgreSQLDialect" />
+      <env name="DB_DRIVER" value="org.postgresql.Driver" />
+      <env name="DB_PASSWORD" value="root" />
+      <env name="DB_URL" value="jdbc:postgresql://localhost:5432/abstract-reddit" />
+      <env name="DB_USER" value="root" />
+      <env name="APPLICATION_URL" value="http://localhost:8080" />
+      <env name="JACKSON_NAMING" value="SNAKE_CASE" />
+      <env name="MAIL_HOST" value="sandbox.smtp.mailtrap.io" />
+      <env name="MAIL_PORT" value="2525" />
+      <env name="MAIL_USERNAME" value="c9c80f4256e023" />
+      <env name="MAIL_PASSWORD" value="4bf3255b5aaa02" />
+      <env name="MAIL_PROTOCOL" value="smtp" />
+      <env name="MAIL_TEST_CONNECTIONS" value="true" />
+      <env name="MAIL_SMTP_AUTH" value="true" />
+      <env name="MAIL_START_TLS_ENABLE" value="true" />
+    </envs>
+    <module name="reddit-clone-abstract" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ua.com.javarush.oleksandr.reddit.redditcloneabstract.RedditCloneAbstractApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>
