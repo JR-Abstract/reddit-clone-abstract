@@ -21,7 +21,7 @@ public class AuthService {
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
-        User user = userMapper.registerRequestToUser(registerRequest);
+        User user = userMapper.map(registerRequest);
 
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         user.setPassword(encodedPassword);

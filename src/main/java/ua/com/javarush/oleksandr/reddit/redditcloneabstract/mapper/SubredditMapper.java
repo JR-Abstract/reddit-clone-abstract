@@ -26,6 +26,7 @@ public abstract class SubredditMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
+    @Mapping(target = "subscribers", ignore = true)
     public abstract Subreddit toEntity(SubredditRequestDTO subredditRequestDTO);
 
     @Named(value = "countAllBySubreddit_Id")
