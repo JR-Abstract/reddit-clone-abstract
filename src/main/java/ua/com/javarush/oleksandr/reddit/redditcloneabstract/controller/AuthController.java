@@ -2,11 +2,9 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RefreshRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
@@ -18,19 +16,34 @@ public class AuthController {
 
     private final AuthService authService;
 
-
     @PostMapping("/signup")
     public ResponseEntity<AuthenticationResponse> signup(@RequestBody RegisterRequest registerRequest) {
 
-        var response = authService.signup(registerRequest);
+        AuthenticationResponse response = authService.signup(registerRequest);
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
 
-        var response = authService.login(loginRequest);
+        AuthenticationResponse response = authService.login(loginRequest);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout() {
+
+        authService.logout();
+
+        return ResponseEntity.ok("logout successful");
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest refreshRequest) {
+
+        AuthenticationResponse response = authService.refreshToken(refreshRequest);
 
         return ResponseEntity.ok(response);
     }
