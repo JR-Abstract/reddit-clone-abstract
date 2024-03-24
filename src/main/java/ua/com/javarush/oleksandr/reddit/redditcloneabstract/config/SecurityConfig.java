@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationEntryPoint;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationFilter;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtBlacklist;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtTokenProvider;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
@@ -37,15 +38,18 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final JwtAuthenticationEntryPoint jwtAuthEntryPoint;
+    private final JwtBlacklist jwtBlacklist;
 
     public SecurityConfig(
             JwtTokenProvider jwtTokenProvider,
             UserService userService,
-            JwtAuthenticationEntryPoint jwtAuthEntryPoint) {
+            JwtAuthenticationEntryPoint jwtAuthEntryPoint,
+            JwtBlacklist jwtBlacklist) {
 
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.jwtAuthEntryPoint = jwtAuthEntryPoint;
+        this.jwtBlacklist = jwtBlacklist;
     }
 
     @Bean
@@ -59,7 +63,8 @@ public class SecurityConfig {
                 .userDetailsService(userService)
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                        new JwtAuthenticationFilter(jwtTokenProvider, jwtBlacklist),
+                        UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API_AUTH_PATHS, ACTIVATION).permitAll()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")

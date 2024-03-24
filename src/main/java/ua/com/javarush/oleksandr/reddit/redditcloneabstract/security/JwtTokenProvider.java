@@ -58,7 +58,7 @@ public class JwtTokenProvider {
         Collection<String> authorities = extractAuthorityFromUser(user);
         extraClaims.put(JWT_AUTHORITY, authorities);
 
-        return buildJwtToken(user.getUsername(), extraClaims, expirationInMilliseconds);
+        return buildJwtToken(user.getEmail(), extraClaims, expirationInMilliseconds);
     }
 
     public boolean validate(String token) {
@@ -70,14 +70,12 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token);
 
             return true;
-
         } catch (ExpiredJwtException e) {
 
             var message = messageSource.getMessage(JWT_VALIDATION_EXPIRED_MESSAGE,
                     new Object[]{e}, Locale.getDefault());
             log.error(message);
             throw new JwtTokenExpiredException(message);
-
         } catch (JwtException | IllegalArgumentException e) {
 
             var message = messageSource.getMessage(JWT_VALIDATION_FAILED_MESSAGE,

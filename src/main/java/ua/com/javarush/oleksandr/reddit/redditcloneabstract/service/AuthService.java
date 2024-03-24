@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
@@ -15,16 +17,22 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.InvalidPas
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.RoleByDefaultNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserDisabledException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserNotFoundException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RefreshRequest;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.*;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.UserMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.RefreshToken;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Role;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.RefreshTokenRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.RoleRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtBlacklist;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtTokenProvider;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,6 +43,8 @@ public class AuthService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+
+    private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -49,6 +59,10 @@ public class AuthService {
     private static final String AUTH_USER_NOT_FOUND = "authentication.user.not.found";
     private static final String AUTH_INVALID_PASSWORD = "authentication.invalid.password";
     private static final String AUTH_ROLE_BY_DEFAULT_NOT_FOUND = "authentication.role.by.default.not.found";
+    private static final String AUTH_REFRESH_TOKEN_NOT_FOUND = "authentication.refresh.token.is.not.founded";
+    private static final String AUTH_REFRESH_TOKEN_IS_EXPIRED = "authentication.refresh.token.is.expired";
+    private static final String AUTH_TOKENS_NOT_MATCHED = "authentication.tokens.not.matched";
+    private static final String AUTH_JWT_TOKEN_IS_IN_BLACKLIST = "jwt.validation.token.is.invalid";
 
     @Value("${user.role.by.default}")
     private String defaultRole;
@@ -68,7 +82,71 @@ public class AuthService {
         return generateTokensAndAuthenticationResponse(user);
     }
 
+     @Transactional
+    public void logout() {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var jwtToken = (String) authentication.getCredentials();
+        blacklist.invalidateToken(jwtToken);
+        refreshTokenService.removeAll(authentication);
+    }
+
     @Transactional
+    public AuthenticationResponse refreshToken(RefreshRequest request) {
+
+        String jwtToken = request.getJwtToken();
+        String requestRefreshToken = request.getRefreshToken();
+
+        var foundRefreshToken = refreshTokenService.findRefreshToken(requestRefreshToken);
+
+        RefreshToken refreshToken = foundRefreshToken
+                .orElseThrow(() -> refreshTokenNotFoundException(requestRefreshToken));
+
+        checkTokenMatch(jwtToken, refreshToken);
+        checkRefreshTokenExpiration(refreshToken);
+
+        refreshTokenService.remove(refreshToken);
+
+        return generateTokensAndAuthenticationResponse(refreshToken.getUser());
+    }
+
+    private RuntimeException refreshTokenNotFoundException(String refreshToken) {
+
+        String message = messageSource.getMessage(AUTH_REFRESH_TOKEN_NOT_FOUND,
+                new Object[]{refreshToken}, Locale.getDefault());
+
+        log.error(message);
+        return new BadCredentialsException(message);
+    }
+
+    private void checkTokenMatch(String jwtToken, RefreshToken refreshToken) {
+
+        String jwtSubject = jwtTokenProvider.extractSubjectFromToken(jwtToken);
+
+
+        if (blacklist.isTokenInvalid(jwtToken)) {
+            refreshTokenService.remove(refreshToken);
+            log.error(AUTH_JWT_TOKEN_IS_IN_BLACKLIST);
+            throw new BadCredentialsException(AUTH_JWT_TOKEN_IS_IN_BLACKLIST);
+        }
+
+        if (!Objects.equals(jwtSubject, refreshToken.getUser().getEmail())) {
+            refreshTokenService.remove(refreshToken);
+            log.error(AUTH_TOKENS_NOT_MATCHED);
+            throw new TokenPrincipalMismatchException(AUTH_TOKENS_NOT_MATCHED);
+        }
+    }
+
+    private void checkRefreshTokenExpiration(RefreshToken refreshToken) {
+
+        if (refreshToken.getExpirationAt().before(new Date())) {
+            String message = messageSource.getMessage(AUTH_REFRESH_TOKEN_IS_EXPIRED,
+                    new Object[]{refreshToken}, Locale.getDefault());
+            log.error(message);
+            throw new RefreshTokenExpiredException(message);
+        }
+    }
+
     public void register(User user) {
 
         ensureUserDoesNotExist(user);
