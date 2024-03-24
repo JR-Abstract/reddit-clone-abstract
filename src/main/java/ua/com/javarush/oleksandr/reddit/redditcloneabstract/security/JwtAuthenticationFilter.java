@@ -32,25 +32,31 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     private static final AntPathRequestMatcher EXCLUDE_AUTH_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher("/api/v1/auth/**");
 
+    private static final AntPathRequestMatcher LOGOUT_PATH_MATCHER =
+            new AntPathRequestMatcher("/api/v1/auth/logout");
+
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final JwtBlacklist blacklist;
 
     @Value("${jwt.validation.token.is.invalid}")
     private String invalidJwtToken;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, JwtBlacklist blacklist) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
         this.jwtTokenProvider = jwtTokenProvider;
+        this.blacklist = blacklist;
     }
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
-        if (!EXCLUDE_AUTH_PATH_REQUEST_MATCHER.matches(request)) {
-
-            return super.requiresAuthentication(request, response)
-                   && Objects.isNull(SecurityContextHolder.getContext().getAuthentication());
+        if (EXCLUDE_AUTH_PATH_REQUEST_MATCHER.matches(request) && !LOGOUT_PATH_MATCHER.matches(request)) {
+            return false;
         }
-        return false;
+
+        return super.requiresAuthentication(request, response)
+               && Objects.isNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Override
@@ -63,7 +69,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
             String jwtToken = header.substring(7);
 
-            if (isTokenValid(jwtToken)) {
+            if (isTokenValid(jwtToken) && !isInBlacklist(jwtToken)) {
 
                 var authRequest = new JwtAuthenticationToken(
                         jwtToken,
@@ -79,6 +85,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         }
 
         return null;
+    }
+
+    private boolean isInBlacklist(String jwtToken) {
+        return blacklist.isTokenInvalid(jwtToken);
     }
 
     private boolean isTokenValid(String token) {
@@ -119,16 +129,5 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         }
 
         chain.doFilter(request, response);
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException {
-
-
-        logger.debug("Failed to authenticate user via JwtToken", failed);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"Unauthorized - " + failed.getMessage() + "\"}");
     }
 }
