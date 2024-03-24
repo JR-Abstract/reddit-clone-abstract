@@ -3,10 +3,7 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -17,6 +14,7 @@ import java.sql.Timestamp;
 @Builder(builderMethodName = "with")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class RefreshToken {
 
     @Id
