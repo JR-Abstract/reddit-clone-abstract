@@ -13,17 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.LoginRequest;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.InvalidPasswordException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.RoleByDefaultNotFoundException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserDisabledException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RefreshRequest;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.RegisterRequest;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.*;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.UserMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.RefreshToken;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Role;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.RefreshTokenRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.RoleRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtBlacklist;
@@ -44,13 +39,15 @@ public class AuthService {
 
     private final RoleRepository roleRepository;
 
-    private final UserMapper userMapper;
-
     private final PasswordEncoder passwordEncoder;
 
     private final JwtTokenProvider jwtTokenProvider;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final JwtBlacklist blacklist;
+
+    private final RefreshTokenService refreshTokenService;
 
     private final MessageSource messageSource;
 
@@ -82,7 +79,7 @@ public class AuthService {
         return generateTokensAndAuthenticationResponse(user);
     }
 
-     @Transactional
+    @Transactional
     public void logout() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();

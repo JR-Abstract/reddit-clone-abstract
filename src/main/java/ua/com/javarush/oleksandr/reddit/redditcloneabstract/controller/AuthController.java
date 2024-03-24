@@ -20,6 +20,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.UserMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ActivationUserService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ErrorHandlerService;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;

@@ -3,6 +3,7 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.UserNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
@@ -22,9 +23,10 @@ public class ActivationUserService {
     @Value("${application.url}")
     private String url;
 
+    @Transactional
     public void sendActivation(User user) {
         String token = generateToken();
-        user.setActivationToken(token);
+        userService.findUserById(user.getUserId()).setActivationToken(token);
 
         String email = user.getEmail();
         String confirmLink = createConfirmLink(token);
