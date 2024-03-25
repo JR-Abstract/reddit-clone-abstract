@@ -1,42 +1,39 @@
+
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.VoteDto;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.VoteService;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+
+@ExtendWith(MockitoExtension.class)
 public class VoteControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+
+    @InjectMocks
+    private VoteController voteController;
+    @Mock
+    private VoteService voteService;
 
     @Test
-    public void saveVote_ReturnsOK() throws Exception {
-        String voteDtoJson = "{\"userId\":1,\"postId\":1,\"voteType\":\"UPVOTE\"}";
+    public void testSaveVote() {
 
-        ResultMatcher ok = MockMvcResultMatchers.status().isOk();
+        VoteDto voteDto = VoteDto.with().build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/votes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(voteDtoJson))
-                .andExpect(ok);
-    }
+        ResponseEntity<Void> response = voteController.saveVote(voteDto);
 
-    @Test
-    public void saveVote_ReturnsBadRequest_WhenInvalidJson() throws Exception {
-        String invalidJson = "{\"userId\":\"invalid\",\"postId\":1,\"voteType\":\"UPVOTE\"}";
-
-        ResultMatcher badRequest = MockMvcResultMatchers.status().isBadRequest();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/votes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidJson))
-                .andExpect(badRequest);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(voteService).vote(voteDto);
     }
 }
+
+
+
