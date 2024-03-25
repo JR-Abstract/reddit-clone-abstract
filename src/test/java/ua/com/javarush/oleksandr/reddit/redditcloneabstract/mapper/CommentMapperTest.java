@@ -2,12 +2,13 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentResponseDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CommentMapperTest {
@@ -84,29 +85,28 @@ class CommentMapperTest {
 
     @Test
     void commentToCommentDTO() {
-        CommentDTO commentDTO = commentMapper.commentToCommentDTO(comment);
+        CommentResponseDTO commentRequestDTO = commentMapper.map(comment);
 
-        assertThat(commentDTO).isNotNull();
-        assertThat(commentDTO.getUserName()).isEqualTo(comment.getUser().getUsername());
-        assertThat(commentDTO.getPostId()).isEqualTo(comment.getPost().getId());
+        assertThat(commentRequestDTO).isNotNull();
+        assertThat(commentRequestDTO.getUserName()).isEqualTo(comment.getUser().getUsername());
+        assertThat(commentRequestDTO.getPostId()).isEqualTo(comment.getPost().getId());
     }
 
     @Test
     void commentDTOToComment() {
-        CommentDTO commentDTO = new CommentDTO();
-        commentDTO.setId(comment.getId());
-        commentDTO.setText(comment.getText());
-        commentDTO.setUserName(user.getUsername());
-        commentDTO.setPostId(post.getId());
+        CommentRequestDTO commentRequestDTO = new CommentRequestDTO();
+        commentRequestDTO.setText(comment.getText());
+        commentRequestDTO.setUserName(user.getUsername());
+        commentRequestDTO.setPostId(post.getId());
 
-        when(userService.findUserByUsername(commentDTO.getUserName())).thenReturn(user);
-        when(postService.findById(commentDTO.getPostId())).thenReturn(post);
+        when(userService.findUserByUsername(commentRequestDTO.getUserName())).thenReturn(user);
+        when(postService.findById(commentRequestDTO.getPostId())).thenReturn(post);
 
-        Comment mappedComment = commentMapper.commentDTOtoComment(commentDTO);
+        Comment mappedComment = commentMapper.map(commentRequestDTO);
 
         assertThat(mappedComment).isNotNull();
         assertThat(mappedComment.getUser()).isEqualTo(user);
         assertThat(mappedComment.getPost()).isEqualTo(post);
-        assertThat(mappedComment.getText()).isEqualTo(commentDTO.getText());
+        assertThat(mappedComment.getText()).isEqualTo(commentRequestDTO.getText());
     }
 }
