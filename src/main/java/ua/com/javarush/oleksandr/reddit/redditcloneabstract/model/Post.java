@@ -64,8 +64,7 @@ public class Post {
     private String url;
 
     @Column(name = "vote_count")
-    @Builder.Default
-    private int voteCount = 0;
+    private Integer voteCount;
 
     @ToString.Exclude
     @ManyToOne(optional = false)

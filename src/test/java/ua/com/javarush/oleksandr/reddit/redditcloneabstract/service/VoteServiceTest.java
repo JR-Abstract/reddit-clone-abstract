@@ -11,6 +11,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.VoteDto;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Vote;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteEntityType;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.enums.VoteType;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.PostRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.UserRepository;
@@ -123,22 +124,18 @@ public class VoteServiceTest {
 
     @Test
     void shouldThrowExceptionWhenPostDoesNotExist() {
-
         var voteDto = createVoteDto(UPVOTE);
-        voteDto.setPostId(999L);
-
         when(postRepository.getReferenceById(999L)).thenThrow(new EntityNotFoundException("Post not found"));
-
-        assertThrows(EntityNotFoundException.class, () -> voteService.vote(voteDto)); // Expect an exception
+        assertThrows(EntityNotFoundException.class, () -> voteService.vote(voteDto));
     }
 
     private VoteDto createVoteDto(VoteType voteType) {
-
         var voteDto = new VoteDto();
         voteDto.setUserId(1L);
-        voteDto.setPostId(1L);
         voteDto.setVoteType(voteType);
-
+        voteDto.setVoteEntityId(999L);
+        voteDto.setVoteEntityType(VoteEntityType.POST);
         return voteDto;
     }
+
 }
