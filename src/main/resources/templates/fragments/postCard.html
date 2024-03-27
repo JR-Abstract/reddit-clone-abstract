@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<fragment th:fragment="postFragment (title, description, subreddit, userName, date)">
+    <div class="card-header" th:text="${subreddit} + ' / ' + ${userName}" ></div>
+    <div class="card-body text-dark">
+        <h5 class="card-title" th:text="${title}"></h5>
+        <p class="card-text" th:text="${description}"></p>
+    </div>
+    <div class="card-footer bg-transparent border-dark" th:text="${date}"></div>
+</fragment>
+
+</body>
+</html>

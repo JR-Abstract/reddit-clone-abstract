@@ -26,6 +26,7 @@ public class SecurityConfig {
     private static final String SUBREDDIT_PATHS = "/api/v1/subreddit/**";
     private static final String VOTE_PATHS = "/api/v1/vote/**";
     private static final String COMMENT_PATHS = "/api/v1/comments/**";
+    private static final String ALL = "/**";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,6 +38,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API_AUTH_PATHS).permitAll()
+                        .requestMatchers(ALL).permitAll()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
                         .requestMatchers(SUBREDDIT_PATHS).hasRole("USER")
                         .requestMatchers(POSTS_PATHS).hasRole("USER")
