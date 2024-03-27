@@ -21,6 +21,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthController {
     private final AuthService authService;
     private final ErrorHandlerService errorHandlerService;
