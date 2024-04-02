@@ -30,14 +30,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "url")
-@Builder(builderMethodName = "with")
+@Builder(builderMethodName = "with", toBuilder = true)
 @ToString
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "uq_post_url", columnNames = "url"),
         indexes = {
                 @Index(name = "idx_post_postName", columnList = "post_name"),
                 @Index(name = "idx_post_subreddit_id", columnList = "subreddit_id"),
-                @Index(name = "idx_post_user_id", columnList = "user_id")
+                @Index(name = "idx_post_user_id", columnList = "user_id"),
+                @Index(name = "idx_post_created_date", columnList = "created_date"),
+                @Index(name = "idx_post_vote_count", columnList = "vote_count")
         }
 )
 public class Post {

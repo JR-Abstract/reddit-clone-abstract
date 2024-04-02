@@ -21,6 +21,7 @@ import java.sql.Statement;
 public class SecurityConfig {
 
     private static final String API_AUTH_PATHS = "/api/v1/auth/**";
+    private static final String ACTIVATION = "/activation/**";
     private static final String ADMIN_PATHS = "/admin/**";
     private static final String POSTS_PATHS = "/api/v1/posts/**";
     private static final String SUBREDDIT_PATHS = "/api/v1/subreddit/**";
@@ -36,7 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(API_AUTH_PATHS).permitAll()
+                        .requestMatchers(API_AUTH_PATHS, ACTIVATION).permitAll()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
                         .requestMatchers(SUBREDDIT_PATHS).hasRole("USER")
                         .requestMatchers(POSTS_PATHS).hasRole("USER")

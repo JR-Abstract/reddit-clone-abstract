@@ -1,5 +1,9 @@
 # Reddit Clone
 
+[![JavaRush University](https://img.shields.io/badge/java-rush-orange?style=for-the-badge&color=orange&cacheSeconds=3600)](https://javarush.com/ua/university/)
+
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e5e84e9b2a6f4782974e37b68792f713)](https://app.codacy.com/gh/JR-Abstract/reddit-clone-abstract/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 ## Table of Contents
 
 1. [Project Description](#project-description)
