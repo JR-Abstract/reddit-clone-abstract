@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.CommentService;
 
 @Component
