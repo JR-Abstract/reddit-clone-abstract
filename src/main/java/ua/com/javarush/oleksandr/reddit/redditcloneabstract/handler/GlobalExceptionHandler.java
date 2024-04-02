@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.error.ErrorEntity;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.error.SimpleErrorEntity;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.CommentCreationException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
@@ -45,5 +46,11 @@ public class GlobalExceptionHandler {
         log.error("log.subreddit.create.exception" + errorInfo);
 
         return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CommentCreationException.class)
+    public ResponseEntity<?> handleException(CommentCreationException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }

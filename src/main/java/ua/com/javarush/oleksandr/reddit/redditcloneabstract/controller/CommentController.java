@@ -1,11 +1,16 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.CommentCreationException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.BindingResultService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.CommentService;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ErrorHandlerService;
 
 import java.util.List;
 
@@ -15,8 +20,11 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final ErrorHandlerService errorHandlerService;
+    private final BindingResultService bindingResultService;
     @PostMapping
-    public ResponseEntity<Void> createComment(@RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<?> createComment(@RequestBody @Valid CommentDTO commentDTO, BindingResult bindingResult) {
+        bindingResultService.handle(bindingResult, CommentCreationException::new);
         commentService.save(commentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
