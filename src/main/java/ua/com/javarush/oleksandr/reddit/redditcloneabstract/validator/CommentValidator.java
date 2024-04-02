@@ -23,7 +23,7 @@ public class CommentValidator implements Validator {
     public void validate(@Valid @NonNull Object target, @NonNull Errors errors) {
         CommentDTO commentDTO = (CommentDTO) target;
 
-        if (commentDTO.getText() == null || commentDTO.getText().isEmpty()) {
+        if (commentService.isCommentEmpty(commentDTO)) {
             errors.rejectValue(
                     "text",
                     "comment.text.exists",

@@ -33,4 +33,8 @@ public class CommentService {
         List<Comment> commentList = commentRepository.findByUserUsername(userName);
         return commentMapper.commentListToCommentDTOList(commentList);
     }
+
+    public boolean isCommentEmpty(CommentDTO commentDTO) {
+        return commentDTO.getText() == null || commentDTO.getText().isEmpty();
+    }
 }
