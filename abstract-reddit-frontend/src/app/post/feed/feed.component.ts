@@ -1,18 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import { Component } from '@angular/core';
+import {PostCardComponent} from "../post-card/post-card.component";
+import {NgForOf} from "@angular/common";
 import {PostService} from "../../shared/service/post.service";
 import {PostModel} from "../../shared/model/PostModel";
-import {NgForOf} from "@angular/common";
 
 @Component({
-  selector: 'app-view-post',
+  selector: 'app-feed',
   standalone: true,
   imports: [
+    PostCardComponent,
     NgForOf
   ],
-  templateUrl: './view-post.component.html',
-  styleUrl: './view-post.component.css'
+  templateUrl: './feed.component.html',
+  styleUrl: './feed.component.css'
 })
-export class ViewPostComponent implements OnInit {
+export class FeedComponent {
 
   posts: Array<PostModel> = [];
   constructor(private postService: PostService) {
@@ -34,4 +36,5 @@ export class ViewPostComponent implements OnInit {
   ngOnInit(): void {
     this.fetchPosts();
   }
+
 }
