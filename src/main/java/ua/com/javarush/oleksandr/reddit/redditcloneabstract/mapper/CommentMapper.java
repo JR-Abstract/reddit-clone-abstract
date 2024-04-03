@@ -29,6 +29,7 @@ public abstract class CommentMapper {
     @Mapping(target = "post", source = "postId", qualifiedByName = "getPostById")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "voteCount", ignore = true)
     public abstract Comment map(CommentRequestDTO commentRequestDTO);
 
     public abstract  List<CommentResponseDTO> mapList(List<Comment> comments);

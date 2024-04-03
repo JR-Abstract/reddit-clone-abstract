@@ -28,11 +28,11 @@ public class CommentService {
 
     public Page<CommentResponseDTO> getAllCommentsForPost(Long postId, Pageable pageable) {
         Page<Comment> commentsPage = commentRepository.findByPostIdOrderByVoteCountDesc(postId, pageable);
-        return commentsPage.map(commentMapper::commentToCommentDTO);
+        return commentsPage.map(commentMapper::map);
     }
 
     public Page<CommentResponseDTO> getAllCommentsForUser(String userName, Pageable pageable) {
         Page<Comment> commentsPage = commentRepository.findByUserUsernameOrderByVoteCountDesc(userName, pageable);
-        return commentsPage.map(commentMapper::commentToCommentDTO);
+        return commentsPage.map(commentMapper::map);
     }
 }
