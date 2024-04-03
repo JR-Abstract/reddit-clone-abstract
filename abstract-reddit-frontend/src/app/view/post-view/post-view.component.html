@@ -1,5 +1,22 @@
-<p-card header="Post {{postId}}">
-  <p class="m-0">
-    Hello {{postId}} asd
-  </p>
-</p-card>
+
+
+<div class="d-flex justify-content-center p-4">
+  <p-card header="{{post?.postName}}">
+    <p class="m-0">
+      {{post?.description}}
+    </p>
+    <p-footer>
+      <small> {{post?.subredditName}} / {{post?.userName}}</small>
+      <div>
+        <p-button icon="pi pi-heart" [rounded]="true" severity="help" [outlined]="true"></p-button>
+        <p-button label="Downvote" icon="pi pi-thumbs-down" class="p-button-rounded p-button-text"></p-button>
+      </div>
+    </p-footer>
+  </p-card>
+
+</div>
+
+<div class="d-flex justify-content-center p-4">
+Comments Section
+</div>
+
