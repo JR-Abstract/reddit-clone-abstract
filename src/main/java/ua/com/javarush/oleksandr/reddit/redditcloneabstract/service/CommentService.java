@@ -1,6 +1,8 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
@@ -9,7 +11,6 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.CommentMapper
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.CommentRepository;
 
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,13 +26,13 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<CommentResponseDTO> getAllCommentsForPost(Long postId) {
-        List<Comment> commentList = commentRepository.findByPostId(postId);
-        return commentMapper.mapList(commentList);
+    public Page<CommentResponseDTO> getAllCommentsForPost(Long postId, Pageable pageable) {
+        Page<Comment> commentsPage = commentRepository.findByPostIdOrderByVoteCountDesc(postId, pageable);
+        return commentsPage.map(commentMapper::commentToCommentDTO);
     }
 
-    public List<CommentResponseDTO> getAllCommentsForUser(String userName) {
-        List<Comment> commentList = commentRepository.findByUserUsername(userName);
-        return commentMapper.mapList(commentList);
+    public Page<CommentResponseDTO> getAllCommentsForUser(String userName, Pageable pageable) {
+        Page<Comment> commentsPage = commentRepository.findByUserUsernameOrderByVoteCountDesc(userName, pageable);
+        return commentsPage.map(commentMapper::commentToCommentDTO);
     }
 }

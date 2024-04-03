@@ -2,20 +2,23 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentResponseDTO;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.CommentMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.CommentRepository;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,8 +34,7 @@ class CommentServiceTest {
     private CommentService commentService;
 
     private Comment comment;
-    private CommentRequestDTO commentRequestDTO;
-    private CommentResponseDTO commentResponseDTO;
+    private CommentDTO commentDTO;
 
     @BeforeEach
     void setUp() {
@@ -41,51 +43,53 @@ class CommentServiceTest {
         comment.setId(1L);
         comment.setText("This is a test comment");
 
-        commentRequestDTO = new CommentRequestDTO();
-        commentRequestDTO.setText("This is a test comment DTO");
-
-        commentResponseDTO = new CommentResponseDTO();
-        commentResponseDTO.setId(1L);
-        commentResponseDTO.setText("This is a test comment DTO");
-
+        commentDTO = new CommentDTO();
+        commentDTO.setId(1L);
+        commentDTO.setText("This is a test comment DTO");
     }
 
     @Test
     void save() {
-        when(commentMapper.map(any(CommentRequestDTO.class))).thenReturn(comment);
+        when(commentMapper.commentDTOtoComment(any(CommentDTO.class))).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
-        commentService.save(commentRequestDTO);
+        commentService.save(commentDTO);
 
-        verify(commentMapper, times(1)).map(any(CommentRequestDTO.class));
+        verify(commentMapper, times(1)).commentDTOtoComment(any(CommentDTO.class));
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
     @Test
     void getAllCommentsForPost() {
+        // Arrange
+        Comment comment = new Comment();
+        CommentDTO commentDTO = new CommentDTO();
+
         List<Comment> comments = Collections.singletonList(comment);
-        when(commentRepository.findByPostId(anyLong())).thenReturn(comments);
-        when(commentMapper.mapList(anyList())).thenReturn(Collections.singletonList(commentResponseDTO));
+        Page<Comment> commentsPage = new PageImpl<>(comments);
+        when(commentRepository.findByPostIdOrderByVoteCountDesc(anyLong(), any())).thenReturn(commentsPage);
+        when(commentMapper.commentToCommentDTO(comment)).thenReturn(commentDTO);
 
-        List<CommentResponseDTO> fetchedComments = commentService.getAllCommentsForPost(1L);
+        Page<CommentDTO> fetchedComments = commentService.getAllCommentsForPost(1L, Pageable.ofSize(1));
 
-        verify(commentRepository, times(1)).findByPostId(anyLong());
-        verify(commentMapper, times(1)).mapList(anyList());
+        verify(commentRepository, times(1)).findByPostIdOrderByVoteCountDesc(anyLong(), any());
+        verify(commentMapper, times(1)).commentToCommentDTO(comment);
         assertThat(fetchedComments).hasSize(1);
-        assertThat(fetchedComments.get(0)).isEqualTo(commentResponseDTO);
+        assertThat(fetchedComments.getContent().get(0)).isEqualTo(commentDTO);
     }
-
     @Test
     void getAllCommentsForUser() {
         List<Comment> comments = Collections.singletonList(comment);
-        when(commentRepository.findByUserUsername(anyString())).thenReturn(comments);
-        when(commentMapper.mapList(anyList())).thenReturn(Collections.singletonList(commentResponseDTO));
+        Page<Comment> commentsPage = new PageImpl<>(comments);
+        when(commentRepository.findByUserUsernameOrderByVoteCountDesc(anyString(), any())).thenReturn(commentsPage);
+        when(commentMapper.commentToCommentDTO(any(Comment.class))).thenReturn(commentDTO);
 
-        List<CommentResponseDTO> fetchedComments = commentService.getAllCommentsForUser("user");
+        Page<CommentDTO> fetchedComments = commentService.getAllCommentsForUser("user", Pageable.unpaged());
 
-        verify(commentRepository, times(1)).findByUserUsername(anyString());
-        verify(commentMapper, times(1)).mapList(anyList());
+        verify(commentRepository, times(1)).findByUserUsernameOrderByVoteCountDesc(anyString(), any());
+        verify(commentMapper, times(1)).commentToCommentDTO(any(Comment.class));
         assertThat(fetchedComments).hasSize(1);
-        assertThat(fetchedComments.get(0)).isEqualTo(commentResponseDTO);
+        assertThat(fetchedComments.getContent().get(0)).isEqualTo(commentDTO);
     }
+
 }

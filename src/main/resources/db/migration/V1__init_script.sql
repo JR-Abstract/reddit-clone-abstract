@@ -71,6 +71,7 @@ create table if not exists comment
     primary key,
     created_date timestamp,
     text         varchar(255),
+    vote_count   integer,
     post_id      bigint
     constraint comment_post_id_fk
     references post,
@@ -87,6 +88,7 @@ create table if not exists subreddit_posts
     subreddit_id BIGSERIAL not null
     constraint subreddit_posts_subreddit_id_fk
     references subreddit,
+    vote_count   integer,
     posts_id     bigint
     constraint subreddit_posts_post_id_fk
     references post
@@ -112,17 +114,21 @@ alter table token
 
 create table if not exists vote
 (
-    vote_id        BIGSERIAL not null
-    constraint vote_pk
-    primary key,
+    id        BIGSERIAL not null
+        constraint vote_pk
+            primary key,
     vote_type smallint,
     post_id   bigint
-    constraint vote_post_id_fk
-    references post,
+        constraint vote_post_id_fk
+            references post,
+    comment_id bigint
+        constraint vote_comment_id_fk
+            references comment,
     user_id   bigint
-    constraint vote_user_id_fk
-    references "user"
+        constraint vote_user_id_fk
+            references "user"
 );
+
 
 alter table vote
     owner to root;
