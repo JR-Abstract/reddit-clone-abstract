@@ -3,7 +3,8 @@ package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentResponseDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.CommentMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.CommentRepository;
@@ -19,18 +20,18 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     @Transactional
-    public void save(CommentDTO commentsDTO) {
-        Comment comment = commentMapper.commentDTOtoComment(commentsDTO);
+    public void save(CommentRequestDTO commentsDTO) {
+        Comment comment = commentMapper.map(commentsDTO);
         commentRepository.save(comment);
     }
 
-    public List<CommentDTO> getAllCommentsForPost(Long postId) {
+    public List<CommentResponseDTO> getAllCommentsForPost(Long postId) {
         List<Comment> commentList = commentRepository.findByPostId(postId);
-        return commentMapper.commentListToCommentDTOList(commentList);
+        return commentMapper.mapList(commentList);
     }
 
-    public List<CommentDTO> getAllCommentsForUser(String userName) {
+    public List<CommentResponseDTO> getAllCommentsForUser(String userName) {
         List<Comment> commentList = commentRepository.findByUserUsername(userName);
-        return commentMapper.commentListToCommentDTOList(commentList);
+        return commentMapper.mapList(commentList);
     }
 }
