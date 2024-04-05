@@ -12,10 +12,13 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditNotFoundException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.SubredditRepository;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.validator.SubredditValidator;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +28,7 @@ import java.util.Optional;
 @Slf4j
 public class SubredditService {
 
+    private final UserService userService;
     private final SubredditRepository subredditRepository;
     private final MessageSource messageSource;
     private final SubredditValidator subredditValidator;
@@ -59,6 +63,54 @@ public class SubredditService {
         }
 
         return subredditResult;
+    }
+
+    @Transactional
+    public void subscribeUser(Long subredditId, Long userId) {
+        User user = userService.findUserById(userId);
+        Subreddit subreddit = subredditRepository.findByIdWithSubscribers(subredditId)
+                .orElseThrow(SubredditNotFoundException::new);
+
+        subreddit.getSubscribers().add(user);
+        user.getSubscriptions().add(subreddit);
+    }
+
+    @Transactional
+    public void unsubscribeUser(Long subredditId, Long userId) {
+        User user = userService.findUserById(userId);
+        Subreddit subreddit = subredditRepository.findByIdWithSubscribers(subredditId)
+                .orElseThrow(SubredditNotFoundException::new);
+
+        subreddit.getSubscribers().remove(user);
+        user.getSubscriptions().remove(subreddit);
+    }
+
+    public Long countSubscribersById(@NotNull Long id) {
+
+        log.debug(messageSource.getMessage("log.subreddit.service.countSubscribersById.start", null,
+                LocaleContextHolder.getLocale()));
+
+        Long countSubscribers = subredditRepository.countSubscribersById(id);
+
+        log.debug(messageSource.getMessage("log.subreddit.service.countSubscribersById.success",
+                new Object[]{countSubscribers},
+                LocaleContextHolder.getLocale()));
+
+        return countSubscribers;
+    }
+
+    public Collection<User> findAllSubscribersById(@NotNull Long id) {
+
+        log.debug(messageSource.getMessage("log.subreddit.service.findAllSubscribersById.start", null,
+                LocaleContextHolder.getLocale()));
+
+        Collection<User> subscribers = subredditRepository.findAllSubscribersById(id);
+
+        log.debug(messageSource.getMessage("log.subreddit.service.findAllSubscribersById.success",
+                new Object[]{subscribers.size()},
+                LocaleContextHolder.getLocale()));
+
+        return subscribers;
     }
 
     @Transactional

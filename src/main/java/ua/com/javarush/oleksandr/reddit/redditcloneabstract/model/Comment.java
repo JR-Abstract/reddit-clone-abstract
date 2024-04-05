@@ -39,4 +39,7 @@ public class Comment {
     @ManyToOne(optional = false)
     @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(name = "fk_comment_post"))
     private Post post;
+
+    @Column(name = "vote_count")
+    private Integer voteCount;
 }

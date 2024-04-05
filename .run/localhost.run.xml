@@ -22,8 +22,10 @@
       <env name="MAIL_SMTP_AUTH" value="true" />
       <env name="MAIL_START_TLS_ENABLE" value="true" />
     </envs>
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="reddit-clone-abstract" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="ua.com.javarush.oleksandr.reddit.redditcloneabstract.RedditCloneAbstractApplication" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
