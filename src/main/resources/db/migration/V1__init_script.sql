@@ -1,15 +1,3 @@
-CREATE TABLE IF NOT EXISTS refresh_token
-(
-    id           BIGSERIAL NOT NULL
-        CONSTRAINT refresh_token_pk
-            PRIMARY KEY,
-    created_date timestamp,
-    token        varchar(255)
-);
-
-ALTER TABLE refresh_token
-    OWNER TO root;
-
 CREATE TABLE IF NOT EXISTS "user"
 (
     id       BIGSERIAL NOT NULL
@@ -161,7 +149,6 @@ create table public.activation_token
     primary key (id),
     constraint idx_activation_token_token unique (token),
     constraint fk_activation_token_user_id FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
-    CONSTRAINT "user_role_role_id_fk" FOREIGN KEY (role_id) REFERENCES role (id)
 );
 
 
@@ -176,6 +163,12 @@ CREATE TABLE IF NOT EXISTS refresh_token
     CONSTRAINT "refresh_token_pk" PRIMARY KEY (id),
     CONSTRAINT "refresh_token_user_fk" FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE
 );
+
+CREATE INDEX refresh_token_expiration_at_idx
+    ON refresh_token (expiration_at);
+
+ALTER TABLE refresh_token
+    OWNER TO root;
 
 create index idx_comment_user_id
     on comment (user_id);
@@ -209,5 +202,3 @@ create index idx_vote_user_id
 
 create index idx_vote_post_id
     on vote (post_id);
-CREATE INDEX refresh_token_expiration_at_idx
-    ON refresh_token (expiration_at);

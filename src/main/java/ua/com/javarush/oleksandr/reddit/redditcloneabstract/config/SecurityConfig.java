@@ -1,7 +1,6 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,12 +15,6 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenti
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtBlacklist;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtTokenProvider;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 @Configuration
 @Slf4j
@@ -78,50 +71,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    CommandLineRunner initRoleIfNotExistsRunner(DataSource dataSource) {
-        return args -> {
-
-            log.debug("Initializing roles if not exists");
-            if (!roleExists(dataSource)) {
-                initRole(dataSource);
-            }
-        };
-    }
-
-    private boolean roleExists(DataSource dataSource) throws SQLException {
-
-        log.debug("Checking if roles exist");
-        final String CHECK_ROLE_SQL = "SELECT COUNT(*) FROM role";
-
-        try (Connection connection = dataSource.getConnection();
-
-             Statement checkStmt = connection.createStatement();
-             ResultSet rs = checkStmt.executeQuery(CHECK_ROLE_SQL)) {
-
-            return rs.next() && rs.getLong(1) > 0;
-        }
-    }
-
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    private void initRole(DataSource dataSource) throws SQLException {
-
-        log.debug("Initializing roles");
-        final String INIT_ROLE_SQL =
-                "INSERT INTO role (name, created_at) VALUES  ('ROLE_ADMIN', NOW()), ('ROLE_USER', NOW());";
-
-        try (Connection connection = dataSource.getConnection();
-
-             Statement insertStmt = connection.createStatement()) {
-
-            int affectedRows = insertStmt.executeUpdate(INIT_ROLE_SQL);
-            if (affectedRows != 2) {
-                throw new SQLException(
-                        "Could not initialize roles, expected to affect 2 rows, but affected " + affectedRows);
-            }
-        }
     }
 }

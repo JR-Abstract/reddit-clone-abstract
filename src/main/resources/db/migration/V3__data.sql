@@ -20,13 +20,9 @@ VALUES ('2024-03-19 08:00:00', 'java_juggernaut@example.com', TRUE, 'hashed_pass
        ('2024-03-22 11:00:00', 'ruby_raider@example.com', TRUE, 'hashed_password', 'RubyRaider'),
        ('2024-03-23 12:00:00', 'javascript_jester@example.com', TRUE, 'hashed_password', 'JavaScriptJester'),
        ('2024-03-24 13:00:00', 'html_huntsman@example.com', TRUE, 'hashed_password', 'HTMLHuntsman'),
-       ('2024-03-25 14:00:00', 'css_sorcerer@example.com', TRUE, 'hashed_password', 'CSSSorcerer')
+       ('2024-03-25 14:00:00', 'css_sorcerer@example.com', TRUE, 'hashed_password', 'CSSSorcerer'),
+       ('2024-03-25 14:00:00', 'test@gmail.com', TRUE, 'test', 'test')
 ;
-
-INSERT INTO user_role (user_id, role_id)
-SELECT u.id, r.id
-FROM "user" u, role r
-WHERE r.name = 'ROLE_USER';
 
 INSERT INTO subreddit (created_date, description, name, user_id)
 VALUES ('2024-03-25 15:00:00', 'A place to discuss all things Java.', 'JavaJungle', 1),
@@ -106,4 +102,11 @@ VALUES ('2024-03-25 22:15:00', 'Wait until you find out about the finally block!
        ('2024-03-26 08:30:00', 'Why not both? Let’s not start a war.', 12, 2),
        ('2024-03-26 08:45:00', 'Tried this with my team, and now they think I’m a superhero.', 13, 3),
        ('2024-03-26 09:00:00', 'Is it possible to play this game on a potato PC?', 13, 4),
-       ('2024-03-26 09:15:00', 'CSS games are the new trend, let’s make more!', 13, 5)
+       ('2024-03-26 09:15:00', 'CSS games are the new trend, let’s make more!', 13, 5);
+
+INSERT INTO role (name, created_at) VALUES  ('ROLE_ADMIN', NOW()), ('ROLE_USER', NOW());
+
+INSERT INTO user_role (user_id, role_id)
+SELECT u.id, r.id
+FROM "user" u, role r
+WHERE r.name = 'ROLE_USER';
