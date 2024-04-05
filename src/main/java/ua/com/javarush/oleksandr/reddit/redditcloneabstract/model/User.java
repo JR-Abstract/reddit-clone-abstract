@@ -1,6 +1,9 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import lombok.*;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import jakarta.persistence.CascadeType;
@@ -27,6 +30,7 @@ import org.hibernate.annotations.NaturalId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -71,6 +75,13 @@ public class User {
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    @ManyToMany(mappedBy = "subscribers", fetch = FetchType.LAZY)
+    private Set<Subreddit> subscriptions = new HashSet<>();
+
 
     public void addRole(Role role) {
         roles.add(role);
