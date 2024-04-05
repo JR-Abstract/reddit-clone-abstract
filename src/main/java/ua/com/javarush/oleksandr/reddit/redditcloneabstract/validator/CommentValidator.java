@@ -7,7 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.CommentService;
 
 @Component
@@ -16,12 +16,12 @@ public class CommentValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return CommentDTO.class.isAssignableFrom(clazz);
+        return CommentRequestDTO.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(@Valid @NonNull Object target, @NonNull Errors errors) {
-        CommentDTO commentDTO = (CommentDTO) target;
+        CommentRequestDTO commentDTO = (CommentRequestDTO) target;
 
         if (commentService.isCommentEmpty(commentDTO)) {
             errors.rejectValue(

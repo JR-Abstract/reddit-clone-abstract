@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+    <title>Title</title>
+</head>
+<body>
+
+<div th:include="fragments/navBar :: navBar" ></div>
+
+<h1>All Posts</h1>
+<div> Hello world</div>
+<div th:each="post: ${posts}" class="card border-dark mb-3" style="max-width: 18rem;">
+    <div th:include="fragments/postCard :: postFragment(
+    ${post.getPostName()},
+    ${post.getDescription()},
+    ${post.getSubreddit().getName()},
+    ${post.getUser().getUsername()},
+    ${#temporals.format(post.getCreatedDate(), 'dd-MM-yyyy'
+    )})"></div>
+</div>
+
+</body>
+</html>
