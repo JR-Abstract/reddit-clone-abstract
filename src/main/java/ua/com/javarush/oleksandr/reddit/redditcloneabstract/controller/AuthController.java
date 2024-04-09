@@ -17,6 +17,9 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.AuthService.AuthenticationResponse;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.ErrorHandlerService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @RestController
@@ -66,11 +69,14 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<?> logout() {
 
         authService.logout();
 
-        return ResponseEntity.ok("logout successful");
+        Map<String, String> messages = new HashMap<>();
+        messages.put("message", "logout successful");
+
+        return ResponseEntity.ok(messages);
     }
 
     @PostMapping("/refresh-token")
