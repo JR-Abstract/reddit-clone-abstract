@@ -1,7 +1,12 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto;
 
-public record SubscriptionDto(
-        Long subredditId,
-        Long userId
-) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SubscriptionDto {
+    private Long subredditId;
 }

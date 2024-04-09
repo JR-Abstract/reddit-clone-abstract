@@ -69,13 +69,9 @@ class SubredditMapperTest {
 
     @Test
     void subredditDtoToSubreddit_Creation() {
-
-        Long userId = 10L;
-
         SubredditRequestDTO subredditRequestDTO = SubredditRequestDTO.with()
                 .name("Subreddit DTO name")
                 .description("Subreddit DTO description")
-                .userId(userId)
                 .build();
 
         User user = mock(User.class);

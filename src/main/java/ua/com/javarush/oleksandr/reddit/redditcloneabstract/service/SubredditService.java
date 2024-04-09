@@ -66,8 +66,8 @@ public class SubredditService {
     }
 
     @Transactional
-    public void subscribeUser(Long subredditId, Long userId) {
-        User user = userService.findUserById(userId);
+    public void subscribeUser(Long subredditId) {
+        User user = userService.currentUser();
         Subreddit subreddit = subredditRepository.findByIdWithSubscribers(subredditId)
                 .orElseThrow(SubredditNotFoundException::new);
 
@@ -76,8 +76,8 @@ public class SubredditService {
     }
 
     @Transactional
-    public void unsubscribeUser(Long subredditId, Long userId) {
-        User user = userService.findUserById(userId);
+    public void unsubscribeUser(Long subredditId) {
+        User user = userService.currentUser();
         Subreddit subreddit = subredditRepository.findByIdWithSubscribers(subredditId)
                 .orElseThrow(SubredditNotFoundException::new);
 
