@@ -11,6 +11,8 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.PostService;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public abstract class SubredditMapper {
 
@@ -28,6 +30,10 @@ public abstract class SubredditMapper {
     @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
     @Mapping(target = "subscribers", ignore = true)
     public abstract Subreddit toEntity(SubredditRequestDTO subredditRequestDTO);
+
+    public abstract List<SubredditResponseDTO> toDtoList(List<Subreddit> subreddits);
+
+    public abstract List<Subreddit> toEntityList(List<SubredditResponseDTO> dtos);
 
     @Named(value = "countAllBySubreddit_Id")
     protected Integer countAllBySubreddit_Id(Long id) {

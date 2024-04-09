@@ -26,6 +26,7 @@ public class SecurityConfig {
     private static final String POSTS_PATHS = "/api/v1/posts/**";
     private static final String SUBREDDIT_PATHS = "/api/v1/subreddit/**";
     private static final String VOTE_PATHS = "/api/v1/vote/**";
+    private static final String USER_PATHS = "/api/v1/user/**";
     private static final String COMMENT_PATHS = "/api/v1/comments/**";
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -65,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(POSTS_PATHS).hasRole("USER")
                         .requestMatchers(VOTE_PATHS).hasRole("USER")
                         .requestMatchers(COMMENT_PATHS).hasRole("USER")
+                        .requestMatchers(USER_PATHS).hasRole("USER")
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
