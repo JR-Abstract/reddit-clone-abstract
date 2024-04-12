@@ -21,7 +21,7 @@ VALUES ('2024-03-19 08:00:00', 'java_juggernaut@example.com', TRUE, 'hashed_pass
        ('2024-03-23 12:00:00', 'javascript_jester@example.com', TRUE, 'hashed_password', 'JavaScriptJester'),
        ('2024-03-24 13:00:00', 'html_huntsman@example.com', TRUE, 'hashed_password', 'HTMLHuntsman'),
        ('2024-03-25 14:00:00', 'css_sorcerer@example.com', TRUE, 'hashed_password', 'CSSSorcerer'),
-       ('2024-03-25 14:00:00', 'test@gmail.com', TRUE, 'test', 'test')
+       ('2024-03-25 14:00:00', 'test@gmail.com', TRUE, '$2a$10$UhX.gFErBoA/zMFtNlPRvOO/tZ3HYPig6zzwXkBzAijecLWLCwyQm', 'test')
 ;
 
 INSERT INTO subreddit (created_date, description, name, user_id)

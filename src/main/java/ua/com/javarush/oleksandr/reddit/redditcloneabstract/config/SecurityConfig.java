@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +19,7 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 
 @Configuration
 @Slf4j
+@EnableWebSecurity
 public class SecurityConfig {
 
     private static final String API_AUTH_PATHS = "/api/v1/auth/**";
@@ -52,7 +54,6 @@ public class SecurityConfig {
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
                 .userDetailsService(userService)
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(
