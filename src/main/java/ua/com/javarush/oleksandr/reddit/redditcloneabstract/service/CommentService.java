@@ -35,4 +35,8 @@ public class CommentService {
         Page<Comment> commentsPage = commentRepository.findByUserUsernameOrderByVoteCountDesc(userName, pageable);
         return commentsPage.map(commentMapper::map);
     }
+
+    public boolean isCommentEmpty(CommentRequestDTO commentDTO) {
+        return commentDTO.getText() == null || commentDTO.getText().isEmpty();
+    }
 }
