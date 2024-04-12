@@ -28,8 +28,8 @@ public class CommentController {
     private final MessageSource messageSource;
 
     @PostMapping
-    public ResponseEntity<?> createComment(@RequestBody @Valid CommentRequestDTO commentRequestDTO,
-                                           BindingResult bindingResult) {
+    public ResponseEntity<Void> createComment(@RequestBody @Valid CommentRequestDTO commentRequestDTO,
+                                              BindingResult bindingResult) {
         bindingResultService.handle(bindingResult, CommentCreationException::new);
 
         log.debug(messageSource.getMessage("log.comment.create", new Object[]{commentRequestDTO.getUserName()},

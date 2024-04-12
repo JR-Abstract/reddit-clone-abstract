@@ -17,6 +17,10 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditNotFoundException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
