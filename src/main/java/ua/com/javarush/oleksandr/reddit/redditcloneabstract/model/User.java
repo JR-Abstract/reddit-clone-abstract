@@ -48,8 +48,8 @@ public class User {
     private Long userId;
 
     @Email
-    @NaturalId
     @NotBlank(message = "Email is mandatory")
+    @NaturalId
     private String email;
 
     @NotBlank(message = "Username is mandatory")

@@ -17,10 +17,6 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostCreationException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.PostNotFoundException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditCreateException;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.exception.SubredditNotFoundException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -56,6 +52,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SubredditNotFoundException.class)
     public ResponseEntity<?> handleException(SubredditNotFoundException exception) {
         SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<?> handleException(LoginException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(SingUpException.class)
+    public ResponseEntity<?> handleException(SingUpException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
