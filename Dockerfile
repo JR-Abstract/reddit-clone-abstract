@@ -6,4 +6,8 @@ COPY . .
 
 RUN mvn clean install -DskipTests
 
-CMD mvn spring-boot:run
+RUN addgroup --system spring && adduser --system --group spring
+
+USER spring
+
+CMD ["mvn", "spring-boot:run"]
