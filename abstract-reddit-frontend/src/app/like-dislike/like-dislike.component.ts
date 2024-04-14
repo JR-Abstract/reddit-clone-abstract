@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {ButtonGroupModule} from "primeng/buttongroup";
 
@@ -13,5 +13,10 @@ import {ButtonGroupModule} from "primeng/buttongroup";
   styleUrl: './like-dislike.component.css'
 })
 export class LikeDislikeComponent {
+  @Input() count: number | undefined;
+  @Input() entityId: any;
+  @Output() upVote: EventEmitter<any> = new EventEmitter<any>();
+  @Output() downVote: EventEmitter<any> = new EventEmitter<any>();
 
+  constructor() { }
 }

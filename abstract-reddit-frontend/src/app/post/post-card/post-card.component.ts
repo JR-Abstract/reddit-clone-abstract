@@ -21,6 +21,7 @@ import {LikeDislikeComponent} from "../../like-dislike/like-dislike.component";
 })
 export class PostCardComponent {
   @Input() post: PostModel | undefined
+  private http: any;
 
 
   constructor(private router: Router) {}
@@ -29,3 +30,4 @@ export class PostCardComponent {
     this.router.navigateByUrl('/view-post/' + id);
   }
 }
+

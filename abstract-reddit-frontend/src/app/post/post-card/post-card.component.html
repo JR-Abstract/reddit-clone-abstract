@@ -1,21 +1,21 @@
-
 <a [routerLink]="['/post/', post?.id]">
 
-<p-card header="{{post?.postName}}" subheader="{{post?.subredditName}} / {{post?.userName}}" [style]="{ width: '360px' }">
+  <p-card header="{{post?.postName}}" subheader="{{post?.subredditName}} / {{post?.userName}}"
+          [style]="{ width: '360px' }">
     <ng-template pTemplate="header">
-        <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+      <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png"/>
     </ng-template>
     <p>
-        {{post?.description}}
+      {{ post?.description }}
     </p>
-  <app-like-dislike></app-like-dislike>
+
     <ng-template pTemplate="footer">
       <p-badge value="4" size="large" severity="info"></p-badge>
 
       <p-button label="Comments" badge="{{post?.voteCount}}" styleClass="mr-2"></p-button>
 
-<!--        <p-button label="Save" icon="pi pi-check"></p-button>-->
-<!--        <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"></p-button>-->
+      <!--        <p-button label="Save" icon="pi pi-check"></p-button>-->
+      <!--        <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"></p-button>-->
     </ng-template>
-</p-card>
+  </p-card>
 </a>

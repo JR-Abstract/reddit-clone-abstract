@@ -1,22 +1,18 @@
-
-
 <div class="d-flex justify-content-center p-4">
   <p-card header="{{post?.postName}}">
     <p class="m-0">
-      {{post?.description}}
+      {{ post?.description }}
     </p>
-    <p-footer>
-      <small> {{post?.subredditName}} / {{post?.userName}}</small>
-      <div>
-        <p-button icon="pi pi-heart" [rounded]="true" severity="help" [outlined]="true"></p-button>
-        <p-button label="Downvote" icon="pi pi-thumbs-down" class="p-button-rounded p-button-text"></p-button>
-      </div>
+    <p-footer class="d-flex justify-content-between">
+      <small> {{ post?.subredditName }} / {{ post?.userName }}</small>
+    </p-footer>
+    <p-footer class="d-flex justify-content-start m-lg-auto mt-3">
+      <app-like-dislike [count]="post?.voteCount" [entityId]="post?.id" (upVote)="onUpVote(post?.id)"
+                        (downVote)="onDownVote(post?.id)"></app-like-dislike>
     </p-footer>
   </p-card>
-
 </div>
 
 <div class="d-flex justify-content-center p-4">
-Comments Section
+  Comments Section
 </div>
-
