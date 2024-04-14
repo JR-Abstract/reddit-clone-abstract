@@ -4,6 +4,7 @@ import {ButtonModule} from "primeng/button";
 import {BadgeModule} from "primeng/badge";
 import {PostModel} from "../../shared/model/PostModel";
 import {Router, RouterLink} from "@angular/router";
+import {LikeDislikeComponent} from "../../like-dislike/like-dislike.component";
 
 @Component({
   selector: 'app-post-card',
@@ -12,7 +13,8 @@ import {Router, RouterLink} from "@angular/router";
     CardModule,
     ButtonModule,
     BadgeModule,
-    RouterLink
+    RouterLink,
+    LikeDislikeComponent
   ],
   templateUrl: './post-card.component.html',
   styleUrl: './post-card.component.css'
