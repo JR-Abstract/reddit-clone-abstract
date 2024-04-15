@@ -1,10 +1,10 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.security;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.log.LogMessage;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
@@ -39,9 +39,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     private final JwtBlacklist blacklist;
 
-    @Value("${jwt.validation.token.is.invalid}")
-    private String invalidJwtToken;
-
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, JwtBlacklist blacklist) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
         this.jwtTokenProvider = jwtTokenProvider;
@@ -69,22 +66,28 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
             String jwtToken = header.substring(7);
 
-            if (isTokenValid(jwtToken) && !isInBlacklist(jwtToken)) {
-
-                var authRequest = new JwtAuthenticationToken(
-                        jwtToken,
-                        getUserEmail(jwtToken),
-                        getGrandedAuthorities(jwtToken));
-
-                authRequest.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                return authRequest;
+            if (isInBlacklist(jwtToken)) {
+                throw new AuthenticationServiceException("Jwt token is blocked. Relogin!");
             }
 
-            throw new AuthenticationServiceException(invalidJwtToken);
+            try {
+                if (isTokenValid(jwtToken)) {
+
+                    var authRequest = new JwtAuthenticationToken(
+                            jwtToken,
+                            getUserEmail(jwtToken),
+                            getGrandedAuthorities(jwtToken));
+
+                    authRequest.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    return authRequest;
+                }
+            } catch (JwtException e) {
+                throw new AuthenticationServiceException(e.getMessage());
+            }
         }
 
-        return null;
+        throw new AuthenticationServiceException("Jwt token is missed.");
     }
 
     private boolean isInBlacklist(String jwtToken) {
@@ -129,5 +132,22 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         }
 
         chain.doFilter(request, response);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException failed) throws IOException {
+
+        SecurityContextHolder.clearContext();
+
+        this.logger.trace("Failed to process authentication request", failed);
+        this.logger.trace("Cleared SecurityContextHolder");
+        this.logger.trace("Handling authentication failure");
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("Authentication Failed: " + failed.getMessage());
+        response.getWriter().flush();
     }
 }

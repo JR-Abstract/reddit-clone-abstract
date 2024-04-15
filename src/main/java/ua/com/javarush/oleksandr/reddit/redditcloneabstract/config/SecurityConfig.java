@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationEntryPoint;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtAuthenticationFilter;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtBlacklist;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.security.JwtTokenProvider;
@@ -32,18 +31,15 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-    private final JwtAuthenticationEntryPoint jwtAuthEntryPoint;
     private final JwtBlacklist jwtBlacklist;
 
     public SecurityConfig(
             JwtTokenProvider jwtTokenProvider,
             UserService userService,
-            JwtAuthenticationEntryPoint jwtAuthEntryPoint,
             JwtBlacklist jwtBlacklist) {
 
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
-        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
         this.jwtBlacklist = jwtBlacklist;
     }
 
@@ -55,7 +51,6 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(userService)
-                .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider, jwtBlacklist),
                         UsernamePasswordAuthenticationFilter.class)
