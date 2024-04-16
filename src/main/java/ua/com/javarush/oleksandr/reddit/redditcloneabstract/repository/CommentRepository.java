@@ -17,4 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByPostIdOrderByVoteCountDesc(Long postId, Pageable pageable);
 
     Page<Comment> findByUserUsernameOrderByVoteCountDesc(String userName, Pageable pageable);
+
+    Long countByPostId(Long postId);
 }

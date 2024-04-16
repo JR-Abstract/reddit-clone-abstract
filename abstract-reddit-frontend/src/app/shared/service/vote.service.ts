@@ -3,13 +3,14 @@ import {Injectable} from '@angular/core';
 import {VoteModel} from '../model/VoteModel';
 import {catchError} from 'rxjs/operators';
 import {throwError} from 'rxjs';
+import {PostService} from './post.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VoteService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private postService: PostService) {
   }
 
   handleUpVotePost(entityId: any): void {

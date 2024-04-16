@@ -3,10 +3,10 @@
     <p class="m-0">
       {{ post?.description }}
     </p>
-    <p-footer class="d-flex justify-content-between">
+    <p-footer class="d-flex justify-content-between pb-2">
       <small> {{ post?.subredditName }} / {{ post?.userName }}</small>
     </p-footer>
-    <p-footer class="d-flex justify-content-start m-lg-auto mt-3">
+    <p-footer class="d-flex justify-content-start m-lg-auto">
       <app-like-dislike [count]="post?.voteCount" [entityId]="post?.id" (upVote)="onUpVote(post?.id)"
                         (downVote)="onDownVote(post?.id)"></app-like-dislike>
     </p-footer>

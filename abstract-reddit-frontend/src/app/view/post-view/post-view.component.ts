@@ -41,8 +41,8 @@ export class PostViewComponent implements OnInit {
     });
   }
 
-  loadPost(): void {
-    this.postService.getPost(this.postId).subscribe({
+  loadPost(postId: number): void {
+    this.postService.getPost(postId).subscribe({
       next: (result) => {
         this.post = result;
       },
@@ -54,11 +54,15 @@ export class PostViewComponent implements OnInit {
 
   onUpVote(postId: any): void {
     this.voteService.handleUpVotePost(postId);
-    this.loadPost();
+    setTimeout(() => {
+      this.loadPost(postId);
+    }, 100);
   }
 
   onDownVote(postId: any): void {
     this.voteService.handleDownVotePost(postId);
-    this.loadPost();
+    setTimeout(() => {
+      this.loadPost(postId);
+    }, 100);
   }
 }

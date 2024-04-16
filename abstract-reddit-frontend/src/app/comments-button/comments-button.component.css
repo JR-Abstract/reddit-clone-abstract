@@ -1,0 +1,21 @@
+.button-comments {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  justify-content: space-between;
+  background-color: #e8e8e8;
+  border-radius: 50px;
+  border: none;
+  padding: 0px 10px;
+  margin-right: 10px;
+  max-width: fit-content;
+}
+
+.button-comments:hover {
+  background-color: #dedede;
+}
+.button-comments-text{
+  padding: 0px 10px;
+  flex-grow: 1;
+  text-align: center;
+}

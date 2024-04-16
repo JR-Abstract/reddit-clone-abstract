@@ -13,10 +13,8 @@ import {ButtonGroupModule} from "primeng/buttongroup";
   styleUrl: './like-dislike.component.css'
 })
 export class LikeDislikeComponent {
-  @Input() count: number | undefined;
+  @Input() count: any;
   @Input() entityId: any;
   @Output() upVote: EventEmitter<any> = new EventEmitter<any>();
   @Output() downVote: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor() { }
 }

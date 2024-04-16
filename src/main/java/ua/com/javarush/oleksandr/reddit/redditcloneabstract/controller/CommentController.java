@@ -54,5 +54,11 @@ public class CommentController {
         Page<CommentResponseDTO> commentsPage = commentService.getAllCommentsForUser(userName, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(commentsPage);
     }
+    @GetMapping("/count/{postId}")
+    public ResponseEntity<Long> countCommentsForPost(@PathVariable Long postId) {
+        Long commentCount = commentService.countCommentsForPost(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(commentCount);
+    }
+
 
 }
