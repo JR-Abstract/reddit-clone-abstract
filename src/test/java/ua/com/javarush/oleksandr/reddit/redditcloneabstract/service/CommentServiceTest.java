@@ -152,4 +152,17 @@ class CommentServiceTest {
         verify(commentMapper).map(any(Comment.class));
     }
 
+    @Test
+    @DisplayName("Should return true when comment text is null")
+    void shouldReturnTrue_WhenTextIsNull() {
+        // Given
+        commentRequestDTO.setText(null);
+
+        // When
+        boolean result = commentService.isCommentEmpty(commentRequestDTO);
+
+        // Then
+        assertTrue(result);
+    }
+
 }
