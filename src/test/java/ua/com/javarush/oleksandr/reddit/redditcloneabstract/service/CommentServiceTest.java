@@ -134,4 +134,22 @@ class CommentServiceTest {
         verify(commentMapper).map(any(Comment.class));
     }
 
+    @Test
+    @DisplayName("Should get all comments for user by name")
+    void shouldGetAllCommentsForUserByName() {
+        // Given
+        when(commentRepository.findByUserUsernameOrderByVoteCountDesc(user.getUsername(), pageable)).thenReturn(commentsPage);
+        when(commentMapper.map(any(Comment.class))).thenReturn(commentResponseDTO);
+
+        // When
+        Page<CommentResponseDTO> result = commentService.getAllCommentsForUser(user.getUsername(), pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(commentResponseDTO, result.getContent().get(0));
+        verify(commentRepository).findByUserUsernameOrderByVoteCountDesc(user.getUsername(), pageable);
+        verify(commentMapper).map(any(Comment.class));
+    }
+
 }
