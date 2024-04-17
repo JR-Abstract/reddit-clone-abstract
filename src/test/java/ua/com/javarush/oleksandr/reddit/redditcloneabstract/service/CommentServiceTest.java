@@ -179,4 +179,17 @@ class CommentServiceTest {
         assertTrue(result);
     }
 
+
+    @Test
+    @DisplayName("Should return false when comment text is not empty")
+    void shouldReturnFalse_WhenTextIsNotEmpty() {
+        // Given
+        commentRequestDTO.setText("Some comment text");
+
+        // When
+        boolean result = commentService.isCommentEmpty(commentRequestDTO);
+
+        // Then
+        assertFalse(result);
+    }
 }
