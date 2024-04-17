@@ -116,4 +116,22 @@ class CommentServiceTest {
         verify(commentRepository).save(comment);
     }
 
+    @Test
+    @DisplayName("Should get all comments for post by id")
+    void shouldGetAllCommentsForPostById() {
+        // Given
+        when(commentRepository.findByPostIdOrderByVoteCountDesc(post.getId(), pageable)).thenReturn(commentsPage);
+        when(commentMapper.map(any(Comment.class))).thenReturn(commentResponseDTO);
+
+        // When
+        Page<CommentResponseDTO> result = commentService.getAllCommentsForPost(post.getId(), pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(commentResponseDTO, result.getContent().get(0));
+        verify(commentRepository).findByPostIdOrderByVoteCountDesc(post.getId(), pageable);
+        verify(commentMapper).map(any(Comment.class));
+    }
+
 }
