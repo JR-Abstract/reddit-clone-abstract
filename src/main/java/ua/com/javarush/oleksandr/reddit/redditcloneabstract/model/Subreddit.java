@@ -1,21 +1,12 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Column;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ConstraintMode;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "subreddit",
@@ -47,6 +38,7 @@ public class Subreddit {
     private ZonedDateTime createdDate;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id",
             updatable = false,
@@ -56,4 +48,28 @@ public class Subreddit {
                     value = ConstraintMode.CONSTRAINT,
                     foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"))
     private User user;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "subreddit_subscribers",
+            schema = "public",
+            indexes = {
+                    @Index(name = "idx_subreddit_subscribers_user_id", columnList = "user_id"),
+                    @Index(name = "idx_subreddit_subscribers_subreddit_id", columnList = "subreddit_id")
+            },
+            joinColumns = @JoinColumn(name = "subreddit_id",
+                    referencedColumnName = "id",
+                    nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "user_id",
+                    referencedColumnName = "id",
+                    nullable = false),
+            inverseForeignKey = @ForeignKey(name = "fk_subreddit_subscribers_user_id",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"),
+            foreignKey = @ForeignKey(name = "fk_subreddit_subscribers_subreddit_id",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY (subreddit_id) REFERENCES subreddit(id) ON DELETE CASCADE"))
+    private Set<User> subscribers = new HashSet<>();
 }

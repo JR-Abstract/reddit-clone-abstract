@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
@@ -34,6 +37,7 @@ class PostServiceTest {
     private Subreddit subreddit;
     private User user;
     private Post post;
+    private List<Post> posts;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +72,14 @@ class PostServiceTest {
                 .subreddit(subreddit)
                 .voteCount(0)
                 .build();
+
+        posts = new ArrayList<>() {{
+            add(post);
+            add(post.toBuilder()
+                    .id(2L)
+                    .voteCount(10)
+                    .build());
+        }};
     }
 
     @Test
@@ -95,11 +107,44 @@ class PostServiceTest {
     @Test
     @DisplayName("Retrieve all posts successfully")
     void findAll() {
-        when(postRepository.findAll()).thenReturn(Arrays.asList(post));
+        when(postRepository.findAll()).thenReturn(Collections.singletonList(post));
         Collection<Post> posts = postService.findAll();
         assertFalse(posts.isEmpty());
         assertEquals(1, posts.size());
         assertTrue(posts.contains(post));
+    }
+
+    @Test
+    @DisplayName("Find all posts by paging successfully")
+    void findAllByPaging() {
+        Integer pageNumber = 0;
+        Integer pageSize = 2;
+
+        Page<Post> page = new PageImpl<>(posts);
+        when(postRepository.findAll(any(Pageable.class))).thenReturn(page);
+        Collection<Post> findPosts = postService.findAllByPaging(pageNumber, pageSize);
+
+        assertFalse(findPosts.isEmpty());
+        assertEquals(pageSize, findPosts.size());
+        assertTrue(findPosts.containsAll(posts));
+    }
+
+    @Test
+    @DisplayName("Find all posts by paging and sorting successfully")
+    void findAllByPagingAndSorting() {
+        Integer pageNumber = 0;
+        Integer pageSize = 2;
+        String field = "voteCount";
+        Boolean top = false;
+
+        Page<Post> page = new PageImpl<>(posts);
+        when(postRepository.findAll(any(Pageable.class))).thenReturn(page);
+        Collection<Post> findPosts = postService.findAllByPagingAndSort(pageNumber, pageSize, field, top);
+
+        assertFalse(findPosts.isEmpty());
+        assertEquals(pageSize, findPosts.size());
+        assertTrue(findPosts.containsAll(posts));
+        assertTrue(() -> posts.get(0).getVoteCount() <= posts.get(1).getVoteCount());
     }
 
     @Test

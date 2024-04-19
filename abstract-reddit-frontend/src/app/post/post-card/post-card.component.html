@@ -1,0 +1,27 @@
+<div role="button" (click)="navigateToPost(post?.id)">
+  <p-card
+    header="{{post?.postName}}"
+    subheader="{{post?.subredditName}} / {{post?.userName}}"
+    [style]="{ width: '700px'}"
+  >
+    <ng-template pTemplate="header">
+      <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png"/>
+    </ng-template>
+    <p>
+      {{ post?.description }}
+    </p>
+
+    <ng-template pTemplate="footer">
+      <p-footer class="d-flex justify-content-start m-lg-auto">
+        <app-like-dislike
+          [count]="post?.voteCount"
+          [entityId]="post?.id"
+          (upVote)="onUpVote(post?.id)"
+          (downVote)="onDownVote(post?.id)"
+          (click)="onCommentsButtonClick($event)"
+        ></app-like-dislike>
+        <app-comments-button [postId]="post?.id"></app-comments-button>
+      </p-footer>
+    </ng-template>
+  </p-card>
+</div>

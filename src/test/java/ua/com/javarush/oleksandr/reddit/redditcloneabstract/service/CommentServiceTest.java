@@ -1,26 +1,33 @@
 package ua.com.javarush.oleksandr.reddit.redditcloneabstract.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
-import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentDTO;
+import org.springframework.data.domain.*;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentRequestDTO;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.dto.CommentResponseDTO;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.mapper.CommentMapper;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Comment;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Post;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.Subreddit;
+import ua.com.javarush.oleksandr.reddit.redditcloneabstract.model.User;
 import ua.com.javarush.oleksandr.reddit.redditcloneabstract.repository.CommentRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.assertj.core.api.Assertions.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
-
     @Mock
     private CommentRepository commentRepository;
 
@@ -30,57 +37,159 @@ class CommentServiceTest {
     @InjectMocks
     private CommentService commentService;
 
+    private Subreddit subreddit;
+    private User user;
+    private Post post;
     private Comment comment;
-    private CommentDTO commentDTO;
+    private CommentRequestDTO commentRequestDTO;
+    private CommentResponseDTO commentResponseDTO;
+    private Pageable pageable;
+
+    private List<Comment> commentList;
+    private Page<Comment> commentsPage;
 
     @BeforeEach
     void setUp() {
-        // Initialize your objects here
-        comment = new Comment();
-        comment.setId(1L);
-        comment.setText("This is a test comment");
+        LocalDateTime localDateTime = LocalDateTime.of(2024, 3, 7, 15, 30);
+        ZoneId zoneId = ZoneId.of("Europe/London");
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, zoneId);
 
-        commentDTO = new CommentDTO();
-        commentDTO.setId(1L);
-        commentDTO.setText("This is a test comment DTO");
+        user = User.with()
+                .userId(1L)
+                .username("user")
+                .email("test@mail.com")
+                .password("password")
+                .enabled(true)
+                .created_at(zonedDateTime)
+                .build();
+
+        subreddit = Subreddit.with()
+                .id(1L)
+                .name("Test Subreddit")
+                .description("Test Description")
+                .user(user)
+                .createdDate(zonedDateTime)
+                .build();
+
+        post = Post.with()
+                .id(1L)
+                .postName("Test Post")
+                .description("Test Description")
+                .url("http://test.com")
+                .createdDate(localDateTime)
+                .user(user)
+                .subreddit(subreddit)
+                .voteCount(0)
+                .build();
+
+        comment = Comment.with()
+                .id(1L)
+                .createdDate(localDateTime)
+                .text("First comment to the post")
+                .voteCount(1)
+                .post(post)
+                .user(user)
+                .build();
+
+        commentRequestDTO = CommentRequestDTO.with()
+                .postId(1L)
+                .text("This is a test comment")
+                .userName("user")
+                .build();
+
+        pageable = PageRequest.of(0, 10, Sort.by("voteCount").descending());
+
+        commentList = List.of(comment);
+
+        commentsPage = new PageImpl<>(commentList, pageable, commentList.size());
+
     }
 
     @Test
-    void save() {
-        when(commentMapper.commentDTOtoComment(any(CommentDTO.class))).thenReturn(comment);
-        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+    @DisplayName("Should save comment successfully")
+    void shouldSaveCommentSuccessfully() {
+        // When
+        when(commentMapper.map(commentRequestDTO)).thenReturn(comment);
+        commentService.save(commentRequestDTO);
 
-        commentService.save(commentDTO);
-
-        verify(commentMapper, times(1)).commentDTOtoComment(any(CommentDTO.class));
-        verify(commentRepository, times(1)).save(any(Comment.class));
+        // Then
+        verify(commentRepository).save(comment);
     }
 
     @Test
-    void getAllCommentsForPost() {
-        List<Comment> comments = Arrays.asList(comment);
-        when(commentRepository.findByPostId(anyLong())).thenReturn(comments);
-        when(commentMapper.commentListToCommentDTOList(anyList())).thenReturn(Arrays.asList(commentDTO));
+    @DisplayName("Should get all comments for post by id")
+    void shouldGetAllCommentsForPostById() {
+        // Given
+        when(commentRepository.findByPostIdOrderByVoteCountDesc(post.getId(), pageable)).thenReturn(commentsPage);
+        when(commentMapper.map(any(Comment.class))).thenReturn(commentResponseDTO);
 
-        List<CommentDTO> fetchedComments = commentService.getAllCommentsForPost(1L);
+        // When
+        Page<CommentResponseDTO> result = commentService.getAllCommentsForPost(post.getId(), pageable);
 
-        verify(commentRepository, times(1)).findByPostId(anyLong());
-        verify(commentMapper, times(1)).commentListToCommentDTOList(anyList());
-        assertThat(fetchedComments).hasSize(1);
-        assertThat(fetchedComments.get(0)).isEqualTo(commentDTO);
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(commentResponseDTO, result.getContent().get(0));
+        verify(commentRepository).findByPostIdOrderByVoteCountDesc(post.getId(), pageable);
+        verify(commentMapper).map(any(Comment.class));
     }
 
     @Test
-    void getAllCommentsForUser() {
-        List<Comment> comments = Collections.singletonList(comment);
-        when(commentRepository.findByUserUsername(anyString())).thenReturn(comments);
-        when(commentMapper.commentListToCommentDTOList(anyList())).thenReturn(Arrays.asList(commentDTO));
+    @DisplayName("Should get all comments for user by name")
+    void shouldGetAllCommentsForUserByName() {
+        // Given
+        when(commentRepository.findByUserUsernameOrderByVoteCountDesc(user.getUsername(), pageable)).thenReturn(commentsPage);
+        when(commentMapper.map(any(Comment.class))).thenReturn(commentResponseDTO);
 
-        List<CommentDTO> fetchedComments = commentService.getAllCommentsForUser("user");
+        // When
+        Page<CommentResponseDTO> result = commentService.getAllCommentsForUser(user.getUsername(), pageable);
 
-        verify(commentRepository, times(1)).findByUserUsername(anyString());
-        verify(commentMapper, times(1)).commentListToCommentDTOList(anyList());
-        assertThat(fetchedComments).hasSize(1);
-        assertThat(fetchedComments.get(0)).isEqualTo(commentDTO);
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(commentResponseDTO, result.getContent().get(0));
+        verify(commentRepository).findByUserUsernameOrderByVoteCountDesc(user.getUsername(), pageable);
+        verify(commentMapper).map(any(Comment.class));
+    }
+
+    @Test
+    @DisplayName("Should return true when comment text is null")
+    void shouldReturnTrue_WhenTextIsNull() {
+        // Given
+        commentRequestDTO.setText(null);
+
+        // When
+        boolean result = commentService.isCommentEmpty(commentRequestDTO);
+
+        // Then
+        assertTrue(result);
+    }
+
+
+    @Test
+    @DisplayName("Should return true when comment text is empty")
+    void shouldReturnTrue_WhenTextIsEmpty() {
+        // Given
+        commentRequestDTO.setText("");
+
+        // When
+        boolean result = commentService.isCommentEmpty(commentRequestDTO);
+
+        // Then
+        assertTrue(result);
+    }
+
+
+    @Test
+    @DisplayName("Should return false when comment text is not empty")
+    void shouldReturnFalse_WhenTextIsNotEmpty() {
+        // Given
+        commentRequestDTO.setText("Some comment text");
+
+        // When
+        boolean result = commentService.isCommentEmpty(commentRequestDTO);
+
+        // Then
+        assertFalse(result);
     }
 }
