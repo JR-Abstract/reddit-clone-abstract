@@ -28,12 +28,12 @@ public class VoteService {
         var voteResult = voteDto.getVoteEntityType().equals(VoteEntityType.POST) ?
                 voteRepository.findVoteByPostIdAndUserUserId(voteDto.getVoteEntityId(), voteDto.getUserId()) :
                 voteRepository.findVoteByCommentIdAndUserUserId(voteDto.getVoteEntityId(), voteDto.getUserId());
-
         voteResult.ifPresentOrElse(
                 (vote) -> handleExistingVote(vote, voteDto),
                 () -> saveNewVote(voteDto, voteDto.getVoteType().equals(UPVOTE) ? 1 : -1)
         );
     }
+
 
     private void saveNewVote(VoteDto voteDto, int voteDelta) {
         Vote vote = switch (voteDto.getVoteEntityType()) {
@@ -57,10 +57,18 @@ public class VoteService {
     private void handleExistingVote(Vote vote, VoteDto voteDto) {
         var oldVote = vote.getVoteType();
         var newVote = voteDto.getVoteType();
-        int voteDelta = oldVote.equals(UPVOTE) ? (newVote.equals(UPVOTE) ? -1 : -2) : (newVote.equals(DOWNVOTE) ? 1 : 2);
-        updateEntityVotes(vote, voteDelta, voteDto.getVoteEntityType());
-        voteRepository.delete(vote);
+        if (oldVote.equals(newVote)) {
+            int voteDelta = oldVote.equals(UPVOTE) ? -1 : 1;
+            updateEntityVotes(vote, voteDelta, voteDto.getVoteEntityType());
+            voteRepository.delete(vote);
+        } else {
+            int voteDelta = oldVote.equals(UPVOTE) ? (newVote.equals(UPVOTE) ? -1 : -2) : (newVote.equals(DOWNVOTE) ? 1 : 2);
+            updateEntityVotes(vote, voteDelta, voteDto.getVoteEntityType());
+            vote.setVoteType(newVote);
+            voteRepository.save(vote);
+        }
     }
+
 
     private void updateEntityVotes(Vote vote, int voteDelta, VoteEntityType voteEntityType) {
         switch (voteEntityType) {

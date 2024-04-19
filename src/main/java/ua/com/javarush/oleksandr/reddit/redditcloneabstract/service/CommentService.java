@@ -39,4 +39,8 @@ public class CommentService {
     public boolean isCommentEmpty(CommentRequestDTO commentDTO) {
         return commentDTO.getText() == null || commentDTO.getText().isEmpty();
     }
+
+    public Long countCommentsForPost(Long postId) {
+        return commentRepository.countByPostId(postId);
+    }
 }
