@@ -15,17 +15,17 @@ import ua.com.javarush.oleksandr.reddit.redditcloneabstract.service.UserService;
 public abstract class SubredditMapper {
 
     @Autowired
-    private UserService userService;
+    protected UserService userService;
 
     @Autowired
-    private PostService postService;
+    protected PostService postService;
 
     @Mapping(target = "numberOfPosts", source = "id", qualifiedByName = "countAllBySubreddit_Id")
     public abstract SubredditResponseDTO toDto(Subreddit subreddit);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "user", source = "userId", qualifiedByName = "findUserById")
+    @Mapping(target = "user", expression  = "java(userService.currentUser())")
     @Mapping(target = "subscribers", ignore = true)
     public abstract Subreddit toEntity(SubredditRequestDTO subredditRequestDTO);
 
@@ -33,12 +33,4 @@ public abstract class SubredditMapper {
     protected Integer countAllBySubreddit_Id(Long id) {
         return postService.countAllBySubreddit_Id(id);
     }
-
-    @Named(value = "findUserById")
-    protected User findUserById(Long id) {
-        return userService.findUserById(id);
-    }
 }
-
-
-

@@ -101,7 +101,7 @@ class SubredditServiceTest {
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(subredditRepository.findByIdWithSubscribers(anyLong())).thenReturn(Optional.of(subreddit));
 
-        subredditService.subscribeUser(1L, 1L);
+        subredditService.subscribeUser(1L);
 
         verify(userService, times(1)).findUserById(1L);
         verify(subredditRepository, times(1)).findByIdWithSubscribers(1L);
@@ -114,7 +114,7 @@ class SubredditServiceTest {
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(subredditRepository.findByIdWithSubscribers(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(SubredditNotFoundException.class, () -> subredditService.subscribeUser(1L, 1L));
+        assertThrows(SubredditNotFoundException.class, () -> subredditService.subscribeUser(1L));
 
         verify(userService, times(1)).findUserById(1L);
         verify(subredditRepository, times(1)).findByIdWithSubscribers(1L);
@@ -125,7 +125,7 @@ class SubredditServiceTest {
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(subredditRepository.findByIdWithSubscribers(anyLong())).thenReturn(Optional.of(subreddit));
 
-        subredditService.unsubscribeUser(1L, 1L);
+        subredditService.unsubscribeUser(1L);
 
         verify(userService, times(1)).findUserById(1L);
         verify(subredditRepository, times(1)).findByIdWithSubscribers(1L);
@@ -138,7 +138,7 @@ class SubredditServiceTest {
         when(userService.findUserById(anyLong())).thenReturn(user);
         when(subredditRepository.findByIdWithSubscribers(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(SubredditNotFoundException.class, () -> subredditService.unsubscribeUser(1L, 1L));
+        assertThrows(SubredditNotFoundException.class, () -> subredditService.unsubscribeUser(1L));
 
         verify(userService, times(1)).findUserById(1L);
         verify(subredditRepository, times(1)).findByIdWithSubscribers(1L);

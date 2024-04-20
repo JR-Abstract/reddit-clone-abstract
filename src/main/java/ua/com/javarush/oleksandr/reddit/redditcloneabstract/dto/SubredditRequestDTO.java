@@ -14,8 +14,5 @@ public class SubredditRequestDTO {
 
     @NotEmpty(message = "Name should not be empty")
     private String name;
-
     private String description;
-
-    private Long userId;
 }

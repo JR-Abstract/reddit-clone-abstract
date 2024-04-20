@@ -87,10 +87,9 @@ public class SubredditController {
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody SubscriptionDto subscription) {
 
-        Long subredditId = subscription.subredditId();
-        Long userId = subscription.userId();
+        Long subredditId = subscription.getSubredditId();
 
-        subredditService.subscribeUser(subredditId, userId);
+        subredditService.subscribeUser(subredditId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -98,10 +97,9 @@ public class SubredditController {
     @PostMapping("/unsubscribe")
     public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionDto subscription) {
 
-        Long subredditId = subscription.subredditId();
-        Long userId = subscription.userId();
+        Long subredditId = subscription.getSubredditId();
 
-        subredditService.unsubscribeUser(subredditId, userId);
+        subredditService.unsubscribeUser(subredditId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

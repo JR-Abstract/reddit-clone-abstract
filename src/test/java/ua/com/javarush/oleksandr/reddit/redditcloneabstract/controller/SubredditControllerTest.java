@@ -122,12 +122,11 @@ class SubredditControllerTest {
     @Test
     void subscribe_whenCalled_invokesServiceAndReturnsOk() {
         Long subredditId = 1L;
-        Long userId = 2L;
-        SubscriptionDto subscriptionDto = new SubscriptionDto(subredditId, userId);
+        SubscriptionDto subscriptionDto = new SubscriptionDto(subredditId);
 
         ResponseEntity<?> response = subredditController.subscribe(subscriptionDto);
 
-        verify(subredditService, times(1)).subscribeUser(subredditId, userId);
+        verify(subredditService, times(1)).subscribeUser(subredditId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -135,12 +134,11 @@ class SubredditControllerTest {
     @Test
     void unsubscribe_whenCalled_invokesServiceAndReturnsOk() {
         Long subredditId = 1L;
-        Long userId = 2L;
-        SubscriptionDto subscriptionDto = new SubscriptionDto(subredditId, userId);
+        SubscriptionDto subscriptionDto = new SubscriptionDto(subredditId);
 
         ResponseEntity<?> response = subredditController.unsubscribe(subscriptionDto);
 
-        verify(subredditService, times(1)).unsubscribeUser(subredditId, userId);
+        verify(subredditService, times(1)).unsubscribeUser(subredditId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
