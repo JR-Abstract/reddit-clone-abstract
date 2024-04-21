@@ -6,6 +6,7 @@ import {PostService} from "../../shared/service/post.service";
 import {ButtonModule} from "primeng/button";
 import {LikeDislikeComponent} from "../../like-dislike/like-dislike.component";
 import {VoteService} from "../../shared/service/vote.service";
+import {CommentsButtonComponent} from "../../comments-button/comments-button.component";
 
 @Component({
   selector: 'app-post-view',
@@ -13,7 +14,8 @@ import {VoteService} from "../../shared/service/vote.service";
   imports: [
     CardModule,
     ButtonModule,
-    LikeDislikeComponent
+    LikeDislikeComponent,
+    CommentsButtonComponent
   ],
   templateUrl: './post-view.component.html',
   styleUrl: './post-view.component.css'

@@ -1,18 +1,17 @@
-<div class="d-flex justify-content-center p-4">
-  <p-card header="{{post?.postName}}">
-    <p class="m-0">
-      {{ post?.description }}
-    </p>
-    <p-footer class="d-flex justify-content-between pb-2">
-      <small> {{ post?.subredditName }} / {{ post?.userName }}</small>
-    </p-footer>
-    <p-footer class="d-flex justify-content-start m-lg-auto">
-      <app-like-dislike [count]="post?.voteCount" [entityId]="post?.id" (upVote)="onUpVote(post?.id)"
-                        (downVote)="onDownVote(post?.id)"></app-like-dislike>
-    </p-footer>
-  </p-card>
-</div>
-
-<div class="d-flex justify-content-center p-4">
-  Comments Section
+<div class="post-container">
+  <div class="post">
+    <div class="post-header">
+      <small>{{post?.subredditName}} / {{post?.userName}}</small>
+    </div>
+    <h2>{{post?.postName}}</h2>
+    <div class="post-description">
+      {{post?.description}}
+    </div>
+    <div class="post-footer">
+      <div class="post-vote">
+        <app-like-dislike [count]="post?.voteCount" [entityId]="post?.id" (upVote)="onUpVote(post?.id)" (downVote)="onDownVote(post?.id)"></app-like-dislike>
+      </div>
+      <div class="post-comment-button"> <app-comments-button [postId]="post?.id"></app-comments-button></div>
+    </div>
+  </div>
 </div>
