@@ -1,0 +1,60 @@
+.post-container {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  max-width: 70%;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post {
+  padding: 20px;
+}
+
+.post-header {
+  margin-bottom: 10px;
+}
+
+.post-header small {
+  color: #a8a8a8;
+}
+.post-header small:hover {
+  color: #666666;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #0079d3;
+}
+
+.post-description {
+  margin-bottom: 10px;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.post-vote .post-comment-button{
+  margin-right: 5px;
+}
+@media screen and (max-width: 900px) {
+  .post-container {
+    max-width: 85%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .post {
+    padding: 15px;
+  }
+  .post-container{
+    max-width: 95%;
+  }
+}
