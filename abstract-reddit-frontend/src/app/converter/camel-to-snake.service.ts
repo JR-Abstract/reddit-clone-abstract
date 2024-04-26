@@ -11,7 +11,6 @@ export class CamelToSnakeService {
 
   constructor() { }
 
-  // Метод для перетворення об'єкта з camelCase у snake_case
   convertToSnakeCase(data: CamelCaseObject): any {
     if (typeof data !== 'object' || data === null) {
       return data;
@@ -19,7 +18,7 @@ export class CamelToSnakeService {
     if (Array.isArray(data)) {
       return data.map(item => this.convertToSnakeCase(item));
     }
-    // Визначення типу для об'єкта result
+
     const result: CamelCaseObject = {};
     return Object.keys(data).reduce((result, key) => {
       const value = data[key];
