@@ -56,17 +56,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(userService)
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(jwtAuthEntryPoint))
-                .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider, jwtBlacklist),
-                        UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(API_AUTH_PATHS, ACTIVATION).permitAll()
-                        .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
-                        .requestMatchers(SUBREDDIT_PATHS).hasRole("USER")
-                        .requestMatchers(POSTS_PATHS).hasRole("USER")
-                        .requestMatchers(VOTE_PATHS).hasRole("USER")
-                        .requestMatchers(COMMENT_PATHS).hasRole("USER")
-                )
+//                .addFilterBefore(
+//                        new JwtAuthenticationFilter(jwtTokenProvider, jwtBlacklist),
+//                        UsernamePasswordAuthenticationFilter.class)
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(API_AUTH_PATHS, ACTIVATION).permitAll()
+//                        .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
+//                        .requestMatchers(SUBREDDIT_PATHS).hasRole("USER")
+//                        .requestMatchers(POSTS_PATHS).hasRole("USER")
+//                        .requestMatchers(VOTE_PATHS).hasRole("USER")
+//                        .requestMatchers(COMMENT_PATHS).hasRole("USER")
+//                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
