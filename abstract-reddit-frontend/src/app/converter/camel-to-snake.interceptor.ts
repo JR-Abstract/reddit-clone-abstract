@@ -3,7 +3,6 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CamelToSnakeService } from './camel-to-snake.service';

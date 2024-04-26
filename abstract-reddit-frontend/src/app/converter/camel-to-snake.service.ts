@@ -9,8 +9,6 @@ interface CamelCaseObject {
 })
 export class CamelToSnakeService {
 
-  constructor() { }
-
   convertToSnakeCase(data: CamelCaseObject): any {
     if (typeof data !== 'object' || data === null) {
       return data;
